@@ -12,6 +12,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useUserStore } from "@/stores/staffUserStore";
+import router from "@/router";
 const store = useUserStore();
 
 const email = ref("");
@@ -19,6 +20,6 @@ const password = ref("");
 
 const loginUser = async () => {
   await store.login(email.value, password.value);
-  if (!store.error) alert("Logged in successfully!");
+  router.push("/");
 };
 </script>

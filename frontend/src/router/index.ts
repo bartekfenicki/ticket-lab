@@ -9,6 +9,7 @@ import ReservationReceiptView from '@/views/ReservationReceiptView.vue'
 import TicketReceiptView from '@/views/TicketReceiptView.vue'
 import AdminPanelView from '@/views/AdminPanelView.vue'
 import { useUserStore } from '@/stores/staffUserStore'
+import AuthView from '@/views/AuthView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -62,6 +63,11 @@ const router = createRouter({
       component: AdminPanelView,
       meta: { requiresAuth: true },
     },
+     {
+      path: "/auth",
+      name: "auth",
+      component: AuthView,
+    },
   ],
 })
 
@@ -69,7 +75,7 @@ router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
 
   if (to.meta.requiresAuth && !userStore.user) {
-    next({ name: "login" });
+    next({ name: "home" });
   } else {
     next();
   }

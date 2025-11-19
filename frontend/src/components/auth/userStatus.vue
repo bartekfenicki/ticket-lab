@@ -18,16 +18,6 @@
         Logout
       </button>
     </div>
-
-    <!-- When not logged in -->
-    <div v-else>
-      <router-link
-        to="/login"
-        class="text-sm font-medium text-indigo-600 hover:underline"
-      >
-        Login
-      </router-link>
-    </div>
   </div>
 </template>
 
@@ -42,4 +32,5 @@ const logout = () => {
   userStore.logout();
   router.push("/");
 };
+
 </script>

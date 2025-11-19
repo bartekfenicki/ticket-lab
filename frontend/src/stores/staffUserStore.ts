@@ -9,6 +9,7 @@ interface User {
 }
 
 interface AuthState {
+  users_list: any[] | null;
   user: User | null;
   token: string | null;
   loading: boolean;
@@ -17,10 +18,11 @@ interface AuthState {
 
 export const useUserStore = defineStore("user", {
   state: (): AuthState => ({
-    user: null,
-    token: localStorage.getItem("token"),
+    users_list: [],
+    user: null as User | null,
+    token: null as string | null,
     loading: false,
-    error: null,
+    error: null as string | null,
   }),
 
   actions: {
@@ -79,7 +81,7 @@ export const useUserStore = defineStore("user", {
         this.user = data.user;
         this.token = data.token;
 
-        localStorage.setItem("token", this.token);
+        localStorage.setItem("auth", JSON.stringify({ user: this.user, token: this.token }));
         this.loading = false;
         return true;
       } catch (err: any) {
@@ -89,10 +91,35 @@ export const useUserStore = defineStore("user", {
       }
     },
 
+    persistLogin() {
+      const saved = localStorage.getItem("auth");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        this.user = parsed.user;
+        this.token = parsed.token;
+      }
+    },
+
     logout() {
       this.user = null;
       this.token = null;
-      localStorage.removeItem("token");
+      localStorage.removeItem("auth");
+    },
+
+    async fetchUsers() {
+      this.loading = true;
+      this.error = null;
+      try {
+        const API_URL = "/api/users";
+        const res = await fetch(API_URL);
+
+        if (!res.ok) throw new Error("Failed to fetch users");
+        this.users_list = await res.json();
+      } catch (err: any) {
+        this.error = err.message;
+      } finally {
+        this.loading = false;
+      }
     },
   },
 });

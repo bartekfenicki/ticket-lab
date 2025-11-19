@@ -3,6 +3,9 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { setupSwagger } from "./config/swagger.js";
 import userRoutes from "./routes/staffUserRoutes.js"
+import ticketTypeRoutes from "./routes/ticketTypeRoutes.js";
+import specialEventsRoutes from "./routes/specialEventsRoutes.js";
+import ticketStockRoutes from "./routes/ticketStockRoutes.js";
 
 dotenv.config();
 
@@ -12,6 +15,9 @@ app.use(express.json());
 setupSwagger(app);
 
 app.use("/api/users", userRoutes);
+app.use("/api/ticket-types", ticketTypeRoutes);
+app.use("/api/special-events", specialEventsRoutes);
+app.use("/api/ticket-stock", ticketStockRoutes);
 
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
