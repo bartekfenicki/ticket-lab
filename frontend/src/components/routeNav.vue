@@ -1,8 +1,8 @@
 <template>
   <nav class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-end h-16 items-center">
-
+      <div class="flex justify-between h-16 items-center">
+        <UserStatus/>
         <!-- Desktop Navigation -->
         <div class="hidden md:flex space-x-8 items-center">
           <RouterLink
@@ -14,13 +14,13 @@
           >
             {{ link.name }}
           </RouterLink>
-        </div>
 
-         <!-- Logo -->
+          <!-- Logo -->
         <div class="flex-shrink-0 flex items-center ms-4">
           <RouterLink to="/" class="text-2xl font-bold text-indigo-600">
             LOGO
           </RouterLink>
+        </div>
         </div>
 
         <!-- Mobile Hamburger Button -->
@@ -84,6 +84,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import UserStatus from './auth/userStatus.vue'
 
 const isMenuOpen = ref(false)
 

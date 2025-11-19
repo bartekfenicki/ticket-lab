@@ -7,7 +7,13 @@
     "node": "^20.19.0 || >=22.12.0"
   },
   "scripts": {
-    "dev": "vite",
+    "dev:frontend": "cd frontend && vite",
+    "build:frontend": "cd frontend && vue-tsc --noEmit && vite build",
+    "preview:frontend": "cd frontend && vite preview",
+    "dev:backend": "cd backend && node --loader ts-node/esm src/index.ts",
+    "build:backend": "cd backend && tsc -p tsconfig.json",
+    "start:backend": "cd backend && node dist/index.js",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "test:unit": "vitest",
@@ -30,6 +36,7 @@
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.8.1",
     "autoprefixer": "^10.4.21",
+    "concurrently": "^9.2.1",
     "eslint": "^9.37.0",
     "eslint-plugin-vue": "~10.5.0",
     "jiti": "^2.6.1",

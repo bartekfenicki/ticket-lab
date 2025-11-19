@@ -7,6 +7,8 @@ import ReservationBookingView from '@/views/ReservationBookingView.vue'
 import PaymentDetailsView from '@/views/PaymentDetailsView.vue'
 import ReservationReceiptView from '@/views/ReservationReceiptView.vue'
 import TicketReceiptView from '@/views/TicketReceiptView.vue'
+import AdminPanelView from '@/views/AdminPanelView.vue'
+import { useUserStore } from '@/stores/staffUserStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -54,7 +56,23 @@ const router = createRouter({
     component: TicketReceiptView,
     props: true
   },
+  {
+      path: "/admin",
+      name: "admin",
+      component: AdminPanelView,
+      meta: { requiresAuth: true },
+    },
   ],
 })
+
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore();
+
+  if (to.meta.requiresAuth && !userStore.user) {
+    next({ name: "login" });
+  } else {
+    next();
+  }
+});
 
 export default router

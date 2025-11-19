@@ -5,9 +5,15 @@
  <div class="mt-16 mb-32">
     <BookingCalendar/>
 
+
+    <CreateUser/>
+
+    <LoginUser/>
   </div>
 </template>
 <script setup lang="ts">
+import CreateUser from '@/components/auth/createUser.vue';
+import LoginUser from '@/components/auth/loginUser.vue';
 import BookingCalendar from '@/components/home/bookingCalendar.vue';
 import ParkMap from '@/components/home/parkMap.vue';
 </script>
