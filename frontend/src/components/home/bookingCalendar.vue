@@ -48,20 +48,13 @@
           :key="day"
           @click="selectDate(day)"
           class="relative p-2 rounded-lg transition-all duration-150 font-medium"
-          :class="[
-            isToday(day) ? 'border border-indigo-600 ' : '',
-            selectedDate?.getDate() === day &&
-            selectedDate?.getMonth() === currentMonth &&
-            selectedDate?.getFullYear() === currentYear
-              ? 'bg-indigo-600 text-white'
-              : 'hover:bg-indigo-100'
-          ]"
+          :class="dayClass(day)"
         >
           {{ day }}
         </button>
       </div>
 
-      <!-- Selected Date + Book Button -->
+      <!-- Selected Date + Event Info -->
       <div
         v-if="selectedDate"
         class="mt-8 border-t pt-4 flex flex-col items-center space-y-4"
@@ -72,6 +65,11 @@
             {{ selectedDateLabel }}
           </span>
         </p>
+
+        <div v-if="selectedEvent" class="bg-red-100 border border-red-400 p-3 rounded-lg w-full text-center">
+          <p class="font-semibold text-red-700">{{ selectedEvent.title }}</p>
+          <p class="text-red-600">{{ selectedEvent.description }}</p>
+        </div>
 
         <button
           @click="goToBooking"
@@ -85,10 +83,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useSpecialEventsStore } from '@/stores/specialEventsStore'
 
 const router = useRouter()
+const events = useSpecialEventsStore()
 
 // Tabs
 const tabs = ['Tickets', 'Reservations']
@@ -100,6 +100,18 @@ const currentMonth = ref(today.getMonth())
 const currentYear = ref(today.getFullYear())
 const selectedDate = ref<Date | null>(today)
 
+onMounted(async () => {
+  await events.fetchEvents()
+
+  if (events.events.length > 0) {
+    const firstEvent = events.events[0]
+    const d = new Date(firstEvent.date)
+
+    currentMonth.value = d.getMonth()
+    currentYear.value = d.getFullYear()
+  }
+})
+
 const monthNames = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'
@@ -107,24 +119,61 @@ const monthNames = [
 const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 // Days in month
-const daysInMonth = computed(() => {
-  return new Date(currentYear.value, currentMonth.value + 1, 0).getDate()
-})
+const daysInMonth = computed(() => new Date(currentYear.value, currentMonth.value + 1, 0).getDate())
 
 // First day offset
-const firstDayOfMonth = computed(() => {
-  return new Date(currentYear.value, currentMonth.value, 1).getDay()
+const firstDayOfMonth = computed(() => new Date(currentYear.value, currentMonth.value, 1).getDay())
+
+
+
+// Load events from store
+const eventsByDate = computed(() => {
+  const map: Record<string, any> = {}
+  events.events.forEach(event => {
+    if (event.active) {
+      const d = new Date(event.date + 'T12:00:00Z')
+      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
+      map[key] = event
+    }
+  })
+  return map
 })
 
-const isToday = (day: number) => {
-  return (
-    day === today.getDate() &&
-    currentMonth.value === today.getMonth() &&
-    currentYear.value === today.getFullYear()
-  )
+// Check if a day has an event
+const hasEvent = (day: number) => {
+  const key = `${currentYear.value}-${String(currentMonth.value + 1).padStart(2,'0')}-${String(day).padStart(2,'0')}`
+  return !!eventsByDate.value[key]
 }
 
+// Selected event
+const selectedEvent = computed(() => {
+  if (!selectedDate.value) return null
+  const key = `${selectedDate.value.getFullYear()}-${String(selectedDate.value.getMonth() + 1).padStart(2,'0')}-${String(selectedDate.value.getDate()).padStart(2,'0')}`
+  return eventsByDate.value[key] || null
+})
 
+// Button classes for calendar days
+const dayClass = (day: number) => {
+  const classes = ['p-2', 'rounded-lg', 'transition-all', 'duration-150', 'font-medium']
+  if (selectedDate.value?.getDate() === day &&
+      selectedDate.value?.getMonth() === currentMonth.value &&
+      selectedDate.value?.getFullYear() === currentYear.value) {
+    classes.push('bg-indigo-600', 'text-white')
+  } else if (hasEvent(day)) {
+    classes.push('bg-red-700', 'text-white', 'hover:bg-red-800')
+  } else if (isToday(day)) {
+    classes.push('border', 'border-indigo-600')
+  } else {
+    classes.push('hover:bg-indigo-100')
+  }
+  return classes.join(' ')
+}
+
+const isToday = (day: number) => (
+  day === today.getDate() &&
+  currentMonth.value === today.getMonth() &&
+  currentYear.value === today.getFullYear()
+)
 
 const prevMonth = () => {
   if (currentMonth.value === 0) {
@@ -152,30 +201,19 @@ const selectedDateLabel = computed(() => {
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
-// Navigate to booking page with selected date
 const selectDate = (day: number) => {
-  // create date at LOCAL midnight to avoid timezone shifts
-  selectedDate.value = new Date(currentYear.value, currentMonth.value, day, 0, 0, 0, 0)
+  selectedDate.value = new Date(currentYear.value, currentMonth.value, day, 0,0,0,0)
 }
 
+// Navigate to booking page with selected date
 const goToBooking = () => {
   if (!selectedDate.value) return
-
-  // build YYYY-MM-DD from local date parts to avoid timezone shifting
   const d = selectedDate.value
   const isoDateLocal = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
-
- const route =
-    activeTab.value === 'Tickets'
-      ? { name: 'tickets', query: { date: isoDateLocal } }
-      : { name: 'reservation', query: { date: isoDateLocal } }
-
-  router.push(route).then(() => {
-    // Ensure scroll resets after navigation
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    })
-  })
+  const route = activeTab.value === 'Tickets'
+    ? { name: 'tickets', query: { date: isoDateLocal } }
+    : { name: 'reservation', query: { date: isoDateLocal } }
+  router.push(route)
 }
 </script>
+

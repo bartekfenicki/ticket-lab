@@ -32,11 +32,12 @@
 <script setup lang="ts">
 import { ref, computed } from "vue"
 import UsersTab from "@/components/admin/addUsers.vue"
-
+import TicketsTab from "@/components/admin/manageTickets.vue"
 
 // Tabs definition
 const tabs = [
   { key: "users", label: "Users", component: UsersTab },
+  {key: "tickets", label: "Tickets", component: TicketsTab }
 ]
 
 const currentTab = ref("events")
