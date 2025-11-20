@@ -1,7 +1,9 @@
 <template>
+  <h1 class="mb-2 mx-4 md:mx-auto w-full md:w-3/5 font-semibold text-xl">Hover to explore the park!</h1>
   <div
-    class="relative mx-auto w-full md:w-3/5 h-[400px] bg-green-700 bg-gradient-to-b from-green-600 to-green-800 rounded-2xl shadow-lg"
-  >
+  class="relative mx-auto w-full md:w-3/5 h-[400px] rounded-2xl shadow-lg overflow-hidden grass-bg"
+>
+
     <!-- Background grid / texture placeholder -->
     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(circle,_rgba(255,255,255,0.15)_1px,_transparent_1px)] bg-[length:20px_20px]" />
 
@@ -16,13 +18,16 @@
     >
       <!-- Placeholder circle for now -->
       <div
-        class="w-16 h-16 rounded-full bg-emerald-400 border-4 border-emerald-700 shadow-lg group-hover:scale-110 transition-transform duration-300 flex items-center justify-center font-bold text-emerald-900"
+        class="group-hover:scale-110 transition-transform duration-300 flex items-center justify-center"
       >
-        {{ area.icon }}
+         <img
+            :src="area.icon"
+            alt="area"
+            class="w-full h-32 object-cover rounded-md"
+          />
       </div>
 
-      <!-- Label below each item -->
-      <p class="mt-2 text-sm font-semibold text-white">{{ area.name }}</p>
+
     </div>
 
     <!-- Hover info panel (moved outside the clipping box) -->
@@ -76,12 +81,61 @@ const panelPositionStyle = computed(() => ({
 }))
 
 const areas: Area[] = [
-  { name: 'Maze', icon: '🌀', image: 'https://via.placeholder.com/300x200?text=Park+Maze', description: 'A fun hedge maze for visitors of all ages.', top: '10%', left: '55%' },
-  { name: 'Bar', icon: '🍹', image: 'https://via.placeholder.com/300x200?text=Outdoor+Bar', description: 'Enjoy refreshing drinks under the open sky.', top: '15%', left: '25%' },
-  { name: 'Tents Field', icon: '⛺', image: 'https://via.placeholder.com/300x200?text=Tents+Field', description: 'A peaceful area for camping and events.', top: '40%', left: '60%' },
-  { name: 'Firecamp', icon: '🔥', image: 'https://via.placeholder.com/300x200?text=Firecamp', description: 'Gather around the campfire for stories and warmth.', top: '65%', left: '15%' },
-  { name: 'Small Snake Maze', icon: '🐍', image: 'https://via.placeholder.com/300x200?text=Snake+Maze', description: 'A winding path for adventurous visitors.', top: '20%', left: '10%' },
-  { name: 'Playground', icon: '🏖️', image: 'https://via.placeholder.com/300x200?text=Playground', description: 'A sandy playground for kids and families.', top: '45%', left: '20%' },
+  {
+    name: 'Maze',
+    icon: new URL('@/assets/icons/map/maze.png', import.meta.url).href,
+    image: new URL('@/assets/images/lab.JPG', import.meta.url).href,
+    description: 'A fun huge wooden maze for visitors of all ages.',
+    top: '2%', left: '67%' },
+  {
+    name: 'Open Space for Activites',
+    icon: new URL('@/assets/icons/map/sports.png', import.meta.url).href,
+    image: new URL('@/assets/images/sports.jpg', import.meta.url).href,
+    description: 'Our park contains loads of free green space to spend your time actively.',
+    top: '33%', left: '75%' },
+
+  {
+    name: 'Tents Field',
+    icon: new URL('@/assets/icons/map/tent.png', import.meta.url).href,
+    image: new URL('@/assets/images/tents.jpg', import.meta.url).href,
+    description: 'A peaceful area for camping, relaxing and events.',
+    top: '33%', left: '52%' },
+  {
+    name: 'Parking',
+    icon: new URL('@/assets/icons/map/parking.png', import.meta.url).href,
+    image: new URL('@/assets/images/parking.jpg', import.meta.url).href,
+    description: 'Our selected place for parking.',
+    top: '63%', left: '67%' },
+   {
+    name: 'Balance Board and Games',
+    icon: new URL('@/assets/icons/map/fungames.png', import.meta.url).href,
+    image: new URL('@/assets/images/fungames.jpg', import.meta.url).href,
+    description: 'Variety of different board games in unconvetional forms, crayons, paint and other fun stuff.',
+    top: '2%', left: '40%' },
+  {
+    name: 'Bar',
+    icon: new URL('@/assets/icons/map/bar2.png', import.meta.url).href,
+    image: new URL('@/assets/images/bar.jpg', import.meta.url).href,
+    description: 'Enjoy refreshing drinks and ice cream under the open sky.',
+    top: '2%', left: '17%' },
+  {
+    name: 'Campfire',
+    icon: new URL('@/assets/icons/map/fireplace.png', import.meta.url).href,
+    image: new URL('@/assets/images/campfire.jpg', import.meta.url).href,
+    description: 'Gather around the campfire for stories and warmth.',
+    top: '65%', left: '17%' },
+  {
+    name: 'Playground',
+    icon: new URL('@/assets/icons/map/playground.png', import.meta.url).href,
+    image: new URL('@/assets/images/playground.jpg', import.meta.url).href,
+    description: 'A sandy playground for kids and families with a beach relaxation spot and hammocks.',
+    top: '33%', left: '28%' },
+  {
+    name: 'Rope Park',
+    icon: new URL('@/assets/icons/map/rope.png', import.meta.url).href,
+    image: new URL('@/assets/images/rope.jpg', import.meta.url).href,
+    description: 'A fun area with a small maze and a balance rope.',
+    top: '33%', left: '5%' },
 ]
 </script>
 
@@ -94,4 +148,29 @@ const areas: Area[] = [
 .fade-leave-to {
   opacity: 0;
 }
+
+
+.grass-bg {
+  background:
+    /* main gradient */
+    linear-gradient(
+      145deg,
+      #0a4f1d 0%,
+      #0f7a34 35%,
+      #0b5c27 70%,
+      #08501e 100%
+    ),
+    /* noise texture */
+    url("data:image/svg+xml;utf8,\
+    <svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'>\
+      <filter id='n' x='0' y='0'>\
+        <feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/>\
+      </filter>\
+      <rect width='200' height='200' filter='url(%23n)' opacity='0.25'/>\
+    </svg>");
+
+  background-blend-mode: overlay;
+  background-size: cover, 200px 200px;
+}
+
 </style>

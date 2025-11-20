@@ -8,7 +8,7 @@
         @click="activeTab = tab"
         class="flex-1 py-3 text-center font-semibold transition-colors duration-200"
         :class="activeTab === tab
-          ? 'text-indigo-600 border-b-4 border-indigo-600 bg-indigo-50'
+          ? 'text-green-600 border-b-4 border-green-600 bg-indigo-50'
           : 'text-gray-600 hover:bg-gray-50'"
       >
         {{ tab }}
@@ -61,19 +61,19 @@
       >
         <p class="text-gray-700 font-medium">
           You selected:
-          <span class="text-indigo-600 font-semibold">
+          <span class="text-green-600 font-semibold">
             {{ selectedDateLabel }}
           </span>
         </p>
 
-        <div v-if="selectedEvent" class="bg-red-100 border border-red-400 p-3 rounded-lg w-full text-center">
-          <p class="font-semibold text-red-700">{{ selectedEvent.title }}</p>
-          <p class="text-red-600">{{ selectedEvent.description }}</p>
+        <div v-if="selectedEvent" class="bg-yellow-100 border border-yellow-600 p-3 rounded-lg w-full text-center">
+          <p class="font-semibold text-yellow-700">{{ selectedEvent.title }}</p>
+          <p class="text-yellow-600">{{ selectedEvent.description }}</p>
         </div>
 
         <button
           @click="goToBooking"
-          class="px-6 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+          class="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
         >
           {{ activeTab === 'Tickets' ? 'Book Tickets' : 'Book Reservation' }}
         </button>
@@ -130,11 +130,7 @@ const firstDayOfMonth = computed(() => new Date(currentYear.value, currentMonth.
 const eventsByDate = computed(() => {
   const map: Record<string, any> = {}
   events.events.forEach(event => {
-    if (event.active) {
-      const d = new Date(event.date + 'T12:00:00Z')
-      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
-      map[key] = event
-    }
+    if (event.active) map[event.date] = event
   })
   return map
 })
@@ -158,13 +154,13 @@ const dayClass = (day: number) => {
   if (selectedDate.value?.getDate() === day &&
       selectedDate.value?.getMonth() === currentMonth.value &&
       selectedDate.value?.getFullYear() === currentYear.value) {
-    classes.push('bg-indigo-600', 'text-white')
+    classes.push('bg-green-600', 'text-white')
   } else if (hasEvent(day)) {
-    classes.push('bg-red-700', 'text-white', 'hover:bg-red-800')
+    classes.push('bg-yellow-800', 'text-white', 'hover:bg-green-800')
   } else if (isToday(day)) {
-    classes.push('border', 'border-indigo-600')
+    classes.push('border', 'border-green-600')
   } else {
-    classes.push('hover:bg-indigo-100')
+    classes.push('hover:bg-green-100')
   }
   return classes.join(' ')
 }

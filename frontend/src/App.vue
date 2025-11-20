@@ -14,4 +14,4 @@ import RouteNav from './components/routeNav.vue';
 
 </template>
 
-<style scoped></style>
+

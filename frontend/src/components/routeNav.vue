@@ -10,17 +10,21 @@
             v-for="link in navLinks"
             :key="link.to"
             :to="link.to"
-            class="text-gray-700 hover:text-indigo-600 font-medium transition-colors duration-200"
-            active-class="text-indigo-600 font-semibold"
+            class="text-gray-700 hover:text-green-600 font-medium transition-colors duration-200"
+            active-class="text-green-600 font-semibold"
           >
             {{ link.name }}
           </RouterLink>
 
           <!-- Logo -->
           <div class="flex-shrink-0 flex items-center ms-4">
-            <RouterLink to="/" class="text-2xl font-bold text-indigo-600">
-              LOGO
-            </RouterLink>
+          <RouterLink to="/" class="flex items-center">
+            <img
+              :src="logo"
+              alt="Logo"
+              class="h-16 w-auto object-contain"
+            />
+          </RouterLink>
           </div>
         </div>
 
@@ -28,7 +32,7 @@
         <div class="md:hidden">
           <button
             @click="toggleMenu"
-            class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-indigo-600 hover:bg-gray-100 transition-colors"
+            class="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-green-600 hover:bg-gray-100 transition-colors"
           >
             <svg
               v-if="!isMenuOpen"
@@ -66,7 +70,7 @@
           :key="link.to"
           :to="link.to"
           @click="closeMenu"
-          class="block text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+          class="block text-gray-700 hover:text-green-600 font-medium transition-colors"
           active-class="text-indigo-600 font-semibold"
         >
           {{ link.name }}
@@ -81,6 +85,7 @@ import { ref, computed } from "vue";
 import { RouterLink } from "vue-router";
 import UserStatus from "./auth/userStatus.vue";
 import { useUserStore } from "@/stores/staffUserStore";
+import logo from "@/assets/icons/logo/lab-logo.jpeg"
 
 const isMenuOpen = ref(false);
 const userStore = useUserStore();
