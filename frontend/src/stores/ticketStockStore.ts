@@ -13,6 +13,7 @@ export interface TicketStock {
 
 interface TicketStockState {
   stocks: TicketStock[]
+  stock: null
   loading: boolean
   error: string | null
 }
@@ -20,6 +21,7 @@ interface TicketStockState {
 export const useTicketStockStore = defineStore('ticketStock', {
   state: (): TicketStockState => ({
     stocks: [],
+    stock: null as any,
     loading: false,
     error: null,
   }),
@@ -35,6 +37,21 @@ export const useTicketStockStore = defineStore('ticketStock', {
         this.stocks = data
       } catch (err: any) {
         this.error = err.message
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async fetchStockByDate(date: string) {
+      this.loading = true
+      this.error = null
+      try {
+        const res = await fetch(`/api/ticket-stock/by-date?date=${date}`)
+        if (!res.ok) throw new Error("Failed to load stock")
+
+        this.stock = await res.json()
+      } catch (err: any) {
+        this.error = err.message || "Error loading stock"
       } finally {
         this.loading = false
       }
@@ -99,4 +116,10 @@ export const useTicketStockStore = defineStore('ticketStock', {
       }
     },
   },
+  getters: {
+    stockForSelectedDate: (state) => {
+      if (!state.stock) return {}
+      return state.stock.stock_data || {}
+    },
+  }
 })

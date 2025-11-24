@@ -1,6 +1,6 @@
 <template>
   <div class="bg-white shadow-md rounded-xl p-6 mt-8">
-    <h2 class="text-2xl font-semibold text-indigo-700 mb-4">🧾 Personal Information</h2>
+    <h2 class="text-2xl font-semibold text-green-700 mb-4">🧾 Personal Information</h2>
     <p class="text-gray-600 mb-6">
       Please enter your contact details and the ticket holders’ names.
     </p>
@@ -12,7 +12,7 @@
           <input
             v-model="localForm.firstName"
             type="text"
-            class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </div>
         <div>
@@ -20,7 +20,7 @@
           <input
             v-model="localForm.lastName"
             type="text"
-            class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </div>
       </div>
@@ -31,7 +31,7 @@
           <input
             v-model="localForm.email"
             type="email"
-            class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </div>
         <div>
@@ -39,7 +39,7 @@
           <input
             v-model="localForm.phone"
             type="tel"
-            class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
           />
         </div>
       </div>
@@ -50,7 +50,7 @@
           v-model="localForm.names"
           placeholder="List full names for all ticket holders"
           rows="3"
-          class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+          class="w-full border rounded-lg p-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
         ></textarea>
       </div>
     </div>

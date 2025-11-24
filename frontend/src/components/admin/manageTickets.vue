@@ -20,6 +20,7 @@
       <TicketTypes v-if="activeTab === 'types'" />
       <TicketStock v-if="activeTab === 'stock'" />
       <SpecialEvents v-if="activeTab === 'event'"/>
+      <TicketsManager v-if="activeTab === 'ticket'"/>
     </div>
   </div>
 </template>
@@ -29,11 +30,13 @@ import { ref } from 'vue'
 import TicketStock from '../tickets/ticketStock.vue'
 import TicketTypes from '../tickets/ticketTypes.vue'
 import SpecialEvents from '../tickets/specialEvents.vue'
+import TicketsManager from '../tickets/ticketsManager.vue'
 
 const tabs = [
   { id: 'types', name: 'Ticket Types' },
   { id: 'stock', name: 'Ticket Stock' },
   { id: 'event', name: 'Special Events' },
+  { id: 'ticket', name: 'Tickets' },
 ]
 
 const activeTab = ref('types')

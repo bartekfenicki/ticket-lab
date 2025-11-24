@@ -5,6 +5,7 @@ import {
   createNewStock,
   updateExistingStock,
   deleteExistingStock,
+  fetchStockByDate,
 } from "../controllers/ticketStockController.js";
 
 const router = Router();
@@ -28,6 +29,8 @@ const router = Router();
  */
 router.get("/", getStocks);
 
+router.get("/by-date", fetchStockByDate)
+
 /**
  * @swagger
  * /api/ticket-stock/{id}:
@@ -47,6 +50,7 @@ router.get("/", getStocks);
  *         description: Not found
  */
 router.get("/:id", getStock);
+
 
 /**
  * @swagger

@@ -20,6 +20,14 @@ export const getStockById = async (id: number): Promise<TicketStock | null> => {
   return result.rows[0] || null;
 };
 
+export const getStockByDate = async (date: string): Promise<TicketStock | null> => {
+  const result = await pool.query(
+    "SELECT * FROM ticket_stock WHERE date = $1",
+    [date]
+  )
+  return result.rows[0] || null
+}
+
 export const createStock = async (data: Omit<TicketStock, "id" | "updated_at">) => {
   const { ticket_type_id, date, total_quantity, sold_quantity, modified_by } = data;
 

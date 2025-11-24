@@ -210,6 +210,7 @@ const goToBooking = () => {
     ? { name: 'tickets', query: { date: isoDateLocal } }
     : { name: 'reservation', query: { date: isoDateLocal } }
   router.push(route)
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 </script>
 

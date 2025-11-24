@@ -29,6 +29,18 @@ export const getStock = async (req: Request, res: Response) => {
   }
 };
 
+export const fetchStockByDate = async (req: Request, res: Response) => {
+  try {
+    const { date } = req.query
+    if (!date) return res.status(400).json({ message: "Date required" })
+
+    const stock = await ticketStockModel.getStockByDate(date as string)
+    res.json(stock || null)
+  } catch (err) {
+    res.status(500).json({ message: "Failed to get stock by date" + err })
+  }
+}
+
 // CREATE
 export const createNewStock = async (req: Request, res: Response) => {
   try {

@@ -1,5 +1,9 @@
 <template>
-<p class="text-xl">ticket receipt</p>
+ <ticketReceipt/>
 </template>
+
 <script setup lang="ts">
+import ticketReceipt from '@/components/booking/ticketReceipt.vue';
 </script>
+
+

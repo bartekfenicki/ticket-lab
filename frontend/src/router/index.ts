@@ -52,7 +52,7 @@ const router = createRouter({
     props: true
   },
   {
-    path: '/book/payment/ticket/receipt', // dynamic segment for source
+    path: '/book/payment/ticket/receipt/:ticketId',// dynamic segment for source
     name: 'ticketReceipt',
     component: TicketReceiptView,
     props: true
@@ -68,6 +68,7 @@ const router = createRouter({
       name: "auth",
       component: AuthView,
     },
+
   ],
 })
 

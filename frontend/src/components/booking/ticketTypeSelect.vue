@@ -1,109 +1,126 @@
 <template>
-  <div class="bg-white shadow-md rounded-xl p-6">
-    <h2 class="text-2xl font-semibold text-indigo-700 mb-4">🎟 Ticket Selection</h2>
-    <p class="text-gray-600 mb-6">
-      Choose your ticket types and quantities below.
-    </p>
+  <div class="space-y-6">
 
-    <!-- Ticket table -->
-    <table class="w-full border-collapse">
-      <thead>
-        <tr class="bg-indigo-50 text-gray-700">
-          <th class="py-3 px-4 text-left rounded-tl-lg">Ticket Type</th>
-          <th class="py-3 px-4 text-left">Description</th>
-          <th class="py-3 px-4 text-left">Price (PLN)</th>
-          <th class="py-3 px-4 text-center rounded-tr-lg">Quantity</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="ticket in tickets"
-          :key="ticket.name"
-          class="border-b hover:bg-gray-50 transition-colors"
+    <!-- EVENT TICKETS -->
+    <div v-if="eventForDay" class="bg-red-50 border border-red-300 p-4 rounded-lg">
+      <h3 class="text-xl font-semibold text-red-700 mb-3">
+        🎉 Special Event: {{ eventForDay.title }}
+      </h3>
+
+      <div class="space-y-4">
+        <div
+          v-for="type in eventTicketTypes"
+          :key="'event-' + type.id"
+          class="p-4 border rounded-lg flex justify-between items-center bg-white"
         >
-          <td class="py-3 px-4 font-medium text-gray-800">{{ ticket.name }}</td>
-          <td class="py-3 px-4 text-gray-600">{{ ticket.description }}</td>
-          <td class="py-3 px-4 text-gray-800 font-semibold">{{ ticket.price }} zł</td>
-          <td class="py-3 px-4 text-center">
-            <input
-              type="number"
-              min="0"
-              v-model.number="ticket.quantity"
-              class="w-16 text-center border rounded-md focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-            />
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          <div>
+            <p class="font-semibold text-gray-800">{{ type.name }}</p>
+            <p class="text-gray-500 text-sm">{{ type.description }}</p>
+            <p class="text-green-700 font-bold mt-1">{{ type.price }} zł</p>
+          </div>
 
-    <!-- Notes -->
-    <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg text-sm text-gray-700">
-      <p class="font-semibold mb-1">Discount and Entry Rules:</p>
-      <ul class="list-disc ml-5 space-y-1">
-        <li>
-          <strong>Discount ticket</strong> (zniżkowy) available with valid documents:
-          <ul class="ml-4 list-disc">
-            <li>Large Family Card (Karta Dużej Rodziny)</li>
-            <li>Warsaw Resident Card</li>
-            <li>Teacher’s Card</li>
-            <li>Resident Card of Pruszków, Brwinów, Podkowa Leśna, Grodzisk Maz.</li>
-          </ul>
-        </li>
-        <li>
-          <strong>Reduced ticket</strong> (ulgowy) — for students and pupils with ID.
-        </li>
-        <li>
-          <strong>Children under 13</strong> must be accompanied by adults (due to
-          past material damage). Not applicable for organized groups.
-        </li>
-      </ul>
+          <input
+            type="number"
+            min="0"
+            class="w-20 border rounded p-2 text-center"
+            v-model.number="ticketSelection[type.id]"
+          />
+        </div>
+      </div>
     </div>
+
+    <!-- NORMAL TICKETS -->
+    <div class="space-y-4">
+      <h3 class="text-xl font-semibold text-green-700">Normal Tickets</h3>
+
+      <div
+        v-for="type in regularTicketTypes"
+        :key="'normal-' + type.id"
+        class="p-4 border rounded-lg flex justify-between items-center"
+      >
+        <div>
+          <p class="font-semibold">{{ type.name }}</p>
+          <p class="text-sm text-gray-500">{{ type.description }}</p>
+          <p class="text-green-600 font-bold mt-1">{{ type.price }} zł</p>
+        </div>
+
+       <input
+          type="number"
+          min="0"
+          class="w-20 border rounded p-2 text-center"
+          :value="ticketSelection[type.id] ?? 0"
+          @input="ticketSelection[type.id] = Number($event.target.value)"
+        />
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, defineEmits, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useTicketTypeStore } from '@/stores/ticketTypesStore'
+import { useTicketStockStore } from '@/stores/ticketStockStore'
+import { useSpecialEventsStore } from '@/stores/specialEventsStore'
 
-interface Ticket {
-  name: string
-  description: string
-  price: number
-  quantity: number
-}
-
-const emit = defineEmits<{
-  (e: 'update:tickets', value: Ticket[]): void
+const props = defineProps<{
+  date: string
+  modelValue: any[]
 }>()
 
-const tickets = reactive<Ticket[]>([
-  {
-    name: 'Discounted',
-    description: 'For eligible individuals with valid ID (see rules below).',
-    price: 40,
-    quantity: 0,
-  },
-  {
-    name: 'Reduced',
-    description: 'For students and pupils with valid student ID.',
-    price: 45,
-    quantity: 0,
-  },
-  {
-    name: 'Regular',
-    description: 'Standard entry for the whole day, unlimited puzzles.',
-    price: 50,
-    quantity: 0,
-  },
-])
+const emit = defineEmits(['update:modelValue'])
 
+const ticketStore = useTicketTypeStore()
+const stockStore = useTicketStockStore()
+const eventStore = useSpecialEventsStore()
 
+const ticketSelection = ref<Record<number, number>>({})
 
-// Emit whenever ticket quantities change
-watch(
-  tickets,
-  () => {
-    emit('update:tickets', tickets)
-  },
-  { deep: true }
+onMounted(async () => {
+  await ticketStore.fetchTicketTypes()
+  await eventStore.fetchEvents()
+  await stockStore.fetchStockByDate(props.date)
+
+  ticketSelection.value = {}
+  console.log(stockStore.fetchStockByDate.length)
+})
+
+const eventForDay = computed(() =>
+  eventStore.events.find(e => e.date === props.date)
 )
+
+const eventTicketTypes = computed(() => {
+  if (!eventForDay.value) return []
+  return ticketStore.ticketTypes.filter(t => t.id === eventForDay.value.ticket_type_id)
+})
+
+const regularTicketTypes = computed(() =>
+  ticketStore.ticketTypes.filter(t => !t.is_special_event)
+)
+
+const stockForDay = computed(() => stockStore.stockForSelectedDate || {})
+
+watch(ticketSelection, (val) => {
+  const result: any[] = []
+
+  for (const id in val) {
+    const qty = val[id]
+    if (qty <= 0) continue
+
+    const type = ticketStore.ticketTypes.find(t => t.id == id)
+    if (!type) continue
+
+    result.push({
+      id: type.id,
+      name: type.name,
+      price: type.price,
+      quantity: qty,
+      isEvent: !!type.is_special_event
+    })
+  }
+
+  emit('update:modelValue', result)
+}, { deep: true })
 </script>
+
+

@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-indigo-50 to-emerald-50 py-12 px-4">
+  <div class="min-h-screen   py-12 px-4">
     <div class="max-w-5xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
 
       <!-- Header -->
-      <div class="bg-indigo-600 text-white p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="bg-green-600 text-white p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 class="text-3xl font-bold mb-1 flex items-center gap-2">
             🎟 Ticket Booking
@@ -17,7 +17,7 @@
         <!-- Return Button -->
         <button
           @click="goHome"
-          class="flex items-center gap-2 bg-white text-indigo-700 px-5 py-2 rounded-lg font-medium hover:bg-indigo-100 transition-all border border-white/30 shadow-sm"
+          class="flex items-center gap-2 bg-white text-green-700 px-5 py-2 rounded-lg font-medium hover:bg-indigo-100 transition-all border border-white/30 shadow-sm"
         >
           ← Back to Home
         </button>
@@ -28,17 +28,19 @@
 
         <!-- Ticket selection -->
         <section class="border-b pb-10">
-          <h2 class="text-2xl font-semibold text-indigo-700 mb-4 flex items-center gap-2">
-            <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-lg text-sm font-medium">Step 1</span>
+          <h2 class="text-2xl font-semibold text-green-700 mb-4 flex items-center gap-2">
+            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-sm font-medium">Step 1</span>
             Choose Your Tickets
           </h2>
-          <TicketTypeSelect v-model:tickets="tickets" />
+          <TicketTypeSelect
+            :date="date"
+            v-model="tickets" />
         </section>
 
         <!-- Personal Info -->
         <section class="pb-10">
-          <h2 class="text-2xl font-semibold text-indigo-700 mb-4 flex items-center gap-2">
-            <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-lg text-sm font-medium">Step 2</span>
+          <h2 class="text-2xl font-semibold text-green-700 mb-4 flex items-center gap-2">
+            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-sm font-medium">Step 2</span>
             Enter Your Details
           </h2>
           <TicketPersonalInfo v-model="personalInfo" />
@@ -59,7 +61,7 @@
             </div>
             <button
               @click="proceedToPayment"
-              class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
+              class="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors"
             >
               Proceed to Payment →
             </button>
@@ -130,6 +132,7 @@ const proceedToPayment = () => {
     params: { type: 'tickets' },
     query: { data: JSON.stringify(bookingData), date }
   })
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 const goHome = () => {
