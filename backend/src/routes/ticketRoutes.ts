@@ -6,7 +6,7 @@
  */
 
 import { Router } from "express";
-import { createTicket, getAllTickets, getTicket, getTicketsByEmail } from "../controllers/ticketController.js";
+import { createTicket, getAllTickets, getTicket, getTicketsByEmail, sendTicketByEmail } from "../controllers/ticketController.js";
 
 const router = Router();
 
@@ -113,5 +113,7 @@ router.get("/:id", getTicket);
 router.get("/by-email", getTicketsByEmail);
 
 router.get("/", getAllTickets);
+
+router.post("/:id/email", sendTicketByEmail);
 
 export default router;

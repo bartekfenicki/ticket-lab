@@ -21,6 +21,10 @@ export interface TicketItem {
   subtotal: number;
 }
 
+export interface TicketWithItems extends Ticket {
+  items: TicketItem[];
+}
+
 // CREATE MAIN TICKET
 export const createTicket = async (ticket: Partial<Ticket>): Promise<Ticket> => {
   const result = await pool.query(

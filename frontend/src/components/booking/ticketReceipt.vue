@@ -29,6 +29,12 @@
         <button @click="downloadTicket" class="mt-6 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700">
           Download Ticket
         </button>
+        <button
+            @click="sendTicketByEmail"
+            class="mt-3 ms-4 px-6 py-3 bg-yellow-800 text-white rounded-lg hover:bg-blue-700"
+          >
+            Send Ticket via Email
+          </button>
       </div>
 
       <!-- No ticket found -->
@@ -251,6 +257,23 @@ async function loadImageWithDimensions(url: string): Promise<{ dataUrl: string; 
     return canvas.toDataURL("image/jpeg"); // keep original format
   }
 }
+
+const sendTicketByEmail = async () => {
+  if (!ticket.value) return;
+
+  try {
+    const res = await fetch(`/api/tickets/${ticket.value.id}/email`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" }
+    });
+
+    if (!res.ok) throw new Error("Failed to send email");
+
+    alert("📨 Ticket sent to email!");
+  } catch (err) {
+    alert("❌ Email sending failed: " + err.message);
+  }
+};
 </script>
 
 

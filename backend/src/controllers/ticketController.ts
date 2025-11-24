@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import * as ticketModel from "../models/ticketModel.js";
 import { v4 as uuidv4 } from "uuid";
+import { generateTicketPdfBuffer } from "../utils/generateTicketPdf.js";
+import nodemailer from "nodemailer";
 
 export const createTicket = async (req: Request, res: Response) => {
   try {
@@ -119,5 +121,49 @@ export const getTicketsByEmail = async (req: Request, res: Response) => {
   } catch (err) {
     console.error("Error fetching tickets by email:", err);
     return res.status(500).json({ error: "Server error" });
+  }
+};
+
+
+export const sendTicketByEmail = async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+    const ticket = await ticketModel.getTicketWithItems(id);
+
+    if (!ticket) {
+      return res.status(404).json({ message: "Ticket not found" });
+    }
+
+    // Generate PDF buffer
+    const pdfBuffer = await generateTicketPdfBuffer(ticket);
+
+    // Email transporter
+    const transporter = nodemailer.createTransport({
+      host: process.env.MAIL_HOST,
+      port: Number(process.env.MAIL_PORT),
+      secure: false,
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS
+      }
+    });
+
+    await transporter.sendMail({
+      from: '"Your Event" <no-reply@yourdomain.com>',
+      to: ticket.email,
+      subject: "Your Ticket Receipt",
+      text: "Attached is your ticket PDF.",
+      attachments: [
+        {
+          filename: `ticket-${ticket.id}.pdf`,
+          content: pdfBuffer,
+        }
+      ]
+    });
+
+    return res.json({ message: "Email sent" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Failed to send email" });
   }
 };
