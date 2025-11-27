@@ -69,6 +69,16 @@ export const updateExistingStock = async (req: Request, res: Response) => {
   }
 };
 
+export const upsertStockController = async (req: Request, res: Response) => {
+  try {
+    const stock = await ticketStockModel.upsertStock(req.body)
+    res.json(stock)
+  } catch (err) {
+    console.error("UPSERT FAILED", err)
+    res.status(500).json({ error: "Upsert failed" })
+  }
+}
+
 // DELETE
 export const deleteExistingStock = async (req: Request, res: Response) => {
   const id = Number(req.params.id);

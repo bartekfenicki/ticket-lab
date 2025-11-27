@@ -6,7 +6,7 @@ export interface TicketStock {
   date: string;
   total_quantity: number;
   sold_quantity: number;
-  modified_by: number | null;
+  modified_by?: number | null;
   updated_at: string;
 }
 
@@ -50,6 +50,25 @@ export const updateStock = async (id: number, data: Partial<TicketStock>) => {
     `UPDATE ticket_stock SET ${setString}, updated_at = NOW()
      WHERE id = $${fields.length + 1} RETURNING *`,
     [...values, id]
+  );
+
+  return result.rows[0];
+};
+
+export const upsertStock = async (data: Omit<TicketStock, "id" | "updated_at">) => {
+  const { ticket_type_id, date, total_quantity, sold_quantity, modified_by } = data;
+
+  const result = await pool.query(
+    `INSERT INTO ticket_stock (ticket_type_id, date, total_quantity, sold_quantity, modified_by)
+     VALUES ($1, $2, $3, $4, $5)
+     ON CONFLICT (ticket_type_id, date)
+     DO UPDATE SET
+        total_quantity = EXCLUDED.total_quantity,
+        sold_quantity = EXCLUDED.sold_quantity,
+        modified_by = NULL,
+        updated_at = NOW()
+     RETURNING *`,
+    [ticket_type_id, date, total_quantity, sold_quantity, modified_by]
   );
 
   return result.rows[0];

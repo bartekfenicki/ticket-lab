@@ -7,6 +7,11 @@ import ticketTypeRoutes from "./routes/ticketTypeRoutes.js";
 import specialEventsRoutes from "./routes/specialEventsRoutes.js";
 import ticketStockRoutes from "./routes/ticketStockRoutes.js";
 import ticketRoutes from "./routes/ticketRoutes.js";
+import reservationRoutes from "./routes/reservationRoutes.js";
+import reservationOptionTypesRoutes from "./routes/reservationOptionTypesRoutes.js";
+import reservationOptionsRoutes from "./routes/reservationOptionsRoutes.js";
+import addOnRoutes from "./routes/addOnRoutes.js";
+import optionTypeVariantsRoutes from "./routes/optionTypeVariantsRoutes.js";
 
 dotenv.config();
 
@@ -20,6 +25,11 @@ app.use("/api/ticket-types", ticketTypeRoutes);
 app.use("/api/special-events", specialEventsRoutes);
 app.use("/api/ticket-stock", ticketStockRoutes);
 app.use("/api/tickets", ticketRoutes);
+app.use("/api/reservations", reservationRoutes);
+app.use("/api/reservation-option-types", reservationOptionTypesRoutes);
+app.use("/api/reservation-options", reservationOptionsRoutes);
+app.use("/api/addons", addOnRoutes);
+app.use("/api/option-type-variants", optionTypeVariantsRoutes);
 
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);

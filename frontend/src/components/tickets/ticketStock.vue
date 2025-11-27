@@ -120,27 +120,41 @@ const monthStartOffset = computed(() => {
 // Helper to get or create stock for a day
 const getDayStock = (day: Date): TicketStock => {
   const key = dayKey(day)
+
+  // DO NOT OVERWRITE EXISTING STOCK
   if (!dayStocks.value[key]) {
     dayStocks.value[key] = {
-      id: undefined,
       ticket_type_id: 1,
       date: key,
       total_quantity: defaultStock.value,
-      sold_quantity: 0,
-      modified_by: null,
-      updated_at: new Date().toISOString(),
+      sold_quantity: 0
     }
   }
+
   return dayStocks.value[key]
 }
+
 
 // Load existing stocks for the month
 const loadMonthStocks = async () => {
   await store.fetchStocks()
+
   monthDays.value.forEach(day => {
-    const stock = store.stocks.find(s => s.date === dayKey(day))
-    if (stock) dayStocks.value[dayKey(day)] = {...stock}
-    else dayStocks.value[dayKey(day)] = { ticket_type_id: 1, date: dayKey(day), total_quantity: defaultStock.value, sold_quantity: 0 }
+    const key = dayKey(day)
+    const existing = store.stocks.find(s => s.date === key)
+
+    if (existing) {
+      // copy full object with ID
+      dayStocks.value[key] = { ...existing }
+    } else {
+      // create *placeholder* with no ID
+      dayStocks.value[key] = {
+        ticket_type_id: 1,
+        date: key,
+        total_quantity: defaultStock.value,
+        sold_quantity: 0
+      }
+    }
   })
 }
 
@@ -161,18 +175,17 @@ const applyToWeekends = () => {
   })
 }
 
-// Save all stocks for the month
 const saveAllStocks = async () => {
   for (const day of monthDays.value) {
     const stock = getDayStock(day)
-    if (stock.id) await store.updateStock(stock.id, stock)
-    else await store.createStock(stock)
+    await store.upsertStock(stock)
   }
-  alert('All stocks saved successfully!')
+  alert("All stocks saved!")
 }
 
 // Load initial stocks (initialize days)
-onMounted(() => {
+onMounted(async() => {
+  await store.fetchStocks()
   monthDays.value.forEach(day => getDayStock(day))
 })
 </script>

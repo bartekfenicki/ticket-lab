@@ -6,6 +6,7 @@ import {
   updateExistingStock,
   deleteExistingStock,
   fetchStockByDate,
+  upsertStockController,
 } from "../controllers/ticketStockController.js";
 
 const router = Router();
@@ -83,6 +84,8 @@ router.post("/", createNewStock);
  *         description: Updated record
  */
 router.put("/:id", updateExistingStock);
+
+router.put("/upsert", upsertStockController);
 
 /**
  * @swagger

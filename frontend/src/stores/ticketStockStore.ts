@@ -78,6 +78,27 @@ export const useTicketStockStore = defineStore('ticketStock', {
       }
     },
 
+    async upsertStock(stock: Omit<TicketStock, "id" | "updated_at">) {
+      this.loading = true
+      try {
+        const res = await fetch('/api/ticket-stock/upsert', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(stock),
+        })
+        if (!res.ok) throw new Error("Failed to save stock")
+        const data = await res.json()
+
+        const index = this.stocks.findIndex(s => s.date === data.date)
+        if (index !== -1) this.stocks[index] = data
+        else this.stocks.push(data)
+
+        return data
+      } finally {
+        this.loading = false
+      }
+    },
+
     async updateStock(id: number, stock: Partial<TicketStock>) {
       this.loading = true
       this.error = null

@@ -33,11 +33,12 @@
 import { ref, computed } from "vue"
 import UsersTab from "@/components/admin/addUsers.vue"
 import TicketsTab from "@/components/admin/manageTickets.vue"
-
+import ReservationsTab from "@/components/admin/manageReservations.vue"
 // Tabs definition
 const tabs = [
   { key: "users", label: "Users", component: UsersTab },
-  {key: "tickets", label: "Tickets", component: TicketsTab }
+  {key: "tickets", label: "Tickets", component: TicketsTab },
+  {key: "reservations", label: "Reservations", component: ReservationsTab }
 ]
 
 const currentTab = ref("events")
