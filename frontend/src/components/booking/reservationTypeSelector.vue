@@ -149,18 +149,15 @@ const totalPrice = computed(() => {
 });
 
 // Proceed to personal info
+const emit = defineEmits(["proceed"]);
+
 const proceed = () => {
-  router.push({
-    name: "ReservationPersonalInfo",
-    query: {
-      reservationData: JSON.stringify({
-        reservation_option_type: selectedOptionType.value,
-        variant: selectedVariant.value,
-        addOns: selectedAddOns.value,
-        numPeople: numPeople.value,
-        totalPrice: totalPrice.value,
-      }),
-    },
+  emit("proceed", {
+    reservation_option_type: selectedOptionType.value,
+    variant: selectedVariant.value,
+    addOns: selectedAddOns.value,
+    numPeople: numPeople.value,
+    totalPrice: totalPrice.value,
   });
 };
 </script>

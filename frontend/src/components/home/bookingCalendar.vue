@@ -103,13 +103,13 @@ const selectedDate = ref<Date | null>(today)
 onMounted(async () => {
   await events.fetchEvents()
 
-  if (events.events.length > 0) {
-    const firstEvent = events.events[0]
-    const d = new Date(firstEvent.date)
+  // if (events.events.length > 0) {
+  //   const firstEvent = events.events[0]
+  //   const d = new Date(firstEvent.date)
 
-    currentMonth.value = d.getMonth()
-    currentYear.value = d.getFullYear()
-  }
+  //   currentMonth.value = d.getMonth()
+  //   currentYear.value = d.getFullYear()
+  // }
 })
 
 const monthNames = [

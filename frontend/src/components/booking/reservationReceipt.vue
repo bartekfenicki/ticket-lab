@@ -1,117 +1,81 @@
 <template>
-  <div class="min-h-screen bg-gray-50 py-12 px-4">
-    <div class="max-w-3xl mx-auto bg-white shadow-lg rounded-xl p-8 space-y-6">
+  <div class="min-h-screen bg-gray-50 py-12 px-4 flex justify-center">
+    <div class="max-w-3xl w-full bg-white rounded-2xl shadow-xl p-8">
+      <!-- Header -->
+      <h1 class="text-3xl font-bold text-indigo-700 mb-6">
+        🎉 Reservation Confirmed!
+      </h1>
 
-      <!-- Header with Print Button -->
-      <div class="flex justify-between items-center">
-        <h1 class="text-3xl font-bold text-indigo-700 mb-2 flex items-center gap-2">
-          🧾 Reservation Receipt
-        </h1>
-        <button
-          @click="printReceipt"
-          class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9V2h12v7M6 18v4h12v-4M6 14h12v4H6v-4z"/>
-          </svg>
-          Print Receipt
-        </button>
-      </div>
-
-      <!-- Reservation Info -->
-      <div class="border border-gray-200 rounded-lg p-6 space-y-4 bg-gray-50">
-        <h2 class="text-xl font-semibold text-gray-800">Reservation Summary</h2>
-        <p><strong>Event Type:</strong> {{ reservationData.type }}</p>
-        <p><strong>Selected Option:</strong> {{ reservationData.option }}</p>
-        <p><strong>Number of People:</strong> {{ reservationData.people }}</p>
-        <p v-if="reservationData.addons?.length">
-          <strong>Add-ons:</strong> {{ reservationData.addons.join(', ') }}
+      <!-- Confirmation Message -->
+      <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6 rounded-lg">
+        <p class="text-green-700">
+          Your reservation request has been placed and sent to the Lab Crew!
         </p>
-        <p class="font-bold text-indigo-700 text-lg">Total Price: {{ reservationData.total }} zł</p>
-        <p><strong>Date:</strong> {{ reservationData.date }}</p>
-      </div>
-
-      <!-- Personal Information -->
-      <div class="border border-gray-200 rounded-lg p-6 space-y-3 bg-gray-50">
-        <h2 class="text-xl font-semibold text-gray-800">Personal Information</h2>
-        <p><strong>First Name:</strong> {{ reservationData.firstName }}</p>
-        <p><strong>Last Name:</strong> {{ reservationData.lastName }}</p>
-        <p><strong>Email:</strong> {{ reservationData.email }}</p>
-        <p><strong>Phone:</strong> {{ reservationData.phone }}</p>
-        <p v-if="reservationData.time"><strong>Time:</strong> {{ reservationData.time }}</p>
-        <p v-if="reservationData.notes"><strong>Notes:</strong> {{ reservationData.notes }}</p>
-      </div>
-
-      <!-- Payment Instructions -->
-      <div class="border border-gray-200 rounded-lg p-6 space-y-3 bg-yellow-50">
-        <h2 class="text-xl font-semibold text-yellow-700">Payment Instructions</h2>
-        <p>
-          Please make your payment via <strong>bank transfer</strong>. The bank account number and
-          payment details will be sent to your email shortly after this reservation.
-        </p>
-        <p>
-          Ensure you include your <strong>reservation ID</strong> in the transfer reference to
-          correctly match your payment.
+        <p class="text-green-700 mt-1">
+          We will contact you shortly via email to confirm the reservation and provide the payment details.
         </p>
       </div>
 
-      <!-- Event Guidelines -->
-      <div class="border border-gray-200 rounded-lg p-6 space-y-3 bg-gray-50">
-        <h2 class="text-xl font-semibold text-gray-800">Event Guidelines</h2>
-        <ul class="list-disc list-inside text-gray-700 space-y-1">
-          <li>Arrive at the park at least 15 minutes before your scheduled time.</li>
-          <li>Bring any necessary documents if using discounted or reduced tickets.</li>
-          <li>Follow the safety and event rules provided in the confirmation email.</li>
-          <li>For groups larger than 10 people, ensure all members are accounted for upon arrival.</li>
+      <!-- Reservation Summary -->
+      <div v-if="reservation" class="bg-indigo-50 p-4 rounded-lg mb-6 border border-indigo-200">
+        <h2 class="text-xl font-semibold text-indigo-800 mb-2">Reservation Summary</h2>
+        <ul class="text-gray-700 space-y-2">
+          <li><strong>Reservation ID:</strong> {{ reservation.id }}</li>
+          <li><strong>Type:</strong> {{ reservation.option_type_id }}</li>
+          <li v-if="reservation.selected_variant">
+            <strong>Variant:</strong> {{ reservation.selected_variant.name }}
+            ({{ formatPrice(reservation.selected_variant.price, reservation.selected_variant.pricing_type) }})
+          </li>
+          <li><strong>Number of People:</strong> {{ reservation.num_people }}</li>
+          <li v-if="reservation.selected_add_ons.length">
+            <strong>Add-Ons:</strong> {{ reservation.selected_add_ons.map(a => a.name).join(", ") }}
+          </li>
+          <li><strong>Total Price:</strong> {{ reservation.total_price }} PLN</li>
+          <li><strong>Date:</strong> {{ reservation.date }}</li>
+          <li><strong>Start Time:</strong> {{ reservation.start_time }}</li>
         </ul>
       </div>
 
-      <!-- Footer / Back Button -->
-      <button
-        @click="goBack"
-        class="w-full px-6 py-3 mt-4 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
-      >
-        ← Back
-      </button>
+      <!-- Contact Info -->
+      <div v-if="reservation" class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-800 mb-2">Contact Information</h2>
+        <ul class="text-gray-700 space-y-1">
+          <li><strong>Name:</strong> {{ reservation.first_name }} {{ reservation.last_name }}</li>
+          <li><strong>Email:</strong> {{ reservation.email }}</li>
+          <li><strong>Phone:</strong> {{ reservation.phone }}</li>
+          <li v-if="reservation.note"><strong>Notes:</strong> {{ reservation.note }}</li>
+        </ul>
+      </div>
+
+      <!-- Back to Home or Reservations -->
+      <div class="mt-6 flex justify-end">
+        <router-link
+          to="/"
+          class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+        >
+          Back to Home
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { useReservationStore } from "@/stores/reservationStore";
 
-const route = useRouter()
+const route = useRoute();
+const reservationStore = useReservationStore();
+const reservationId = Number(route.query.id); // Pass reservation ID in query param
 
-interface ReservationData {
-  type: string
-  option: string
-  people: number
-  addons?: string[]
-  total: number
-  date: string
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  time?: string
-  notes?: string
-}
+onMounted(async () => {
+  if (reservationId) {
+    await reservationStore.fetchReservationById(reservationId);
+  }
+});
 
-const ReservationData = ref<ReservationData>(null)
+const reservation = reservationStore.currentReservation;
 
-const props = defineProps<{
-  reservationData: ReservationData
-}>()
-
-const router = useRouter()
-const goBack = () => {
-  router.back()
-}
-
-
-// Print function
-const printReceipt = () => {
-  window.print()
-}
+const formatPrice = (price: number, type: string) =>
+  type === "per_person" ? `${price} PLN / person` : `${price} PLN`;
 </script>
