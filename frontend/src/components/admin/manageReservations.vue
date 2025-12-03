@@ -22,6 +22,7 @@
       <ReservationOptionTypesManager v-if="activeTab === 'optionTypes'" />
       <ReservationOptionTypeVariantsManager v-if="activeTab === 'variants'" />
       <AddOnsManager v-if="activeTab === 'addons'"/>
+      <ReservationsManager v-if="activeTab === 'reservations'"/>
     </div>
   </div>
 </template>
@@ -31,11 +32,13 @@ import { ref } from 'vue'
 import ReservationOptionTypesManager from '../reservations/reservationOptionTypesManager.vue'
 import ReservationOptionTypeVariantsManager from '../reservations/optionTypeVariantsManager.vue'
 import AddOnsManager from '../reservations/addOnsManager.vue'
+import ReservationsManager from '../reservations/reservationsManager.vue'
 
 const tabs = [
   { id: 'optionTypes', name: 'Reservation Option Types' },
   { id: 'variants', name: 'Option Type Variants' },
   { id: 'addons', name: 'Add Ons' },
+  { id: 'reservations', name: 'Reservations' },
 ]
 
 const activeTab = ref('optionTypes')

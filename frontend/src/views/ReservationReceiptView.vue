@@ -1,6 +1,6 @@
 <template>
 
- <ReservationReceipt :reservationData="reservationData" />
+ <ReservationReceipt />
 
 </template>
 <script setup lang="ts">

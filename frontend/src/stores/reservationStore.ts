@@ -54,6 +54,7 @@ export const useReservationStore = defineStore("reservationStore", () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
   const currentReservation = ref<Reservation | null>(null);
+  const reservations = ref<Reservation[]>([]);
 
   const fetchReservationById = async (id: number) => {
     loading.value = true;
@@ -93,5 +94,67 @@ export const useReservationStore = defineStore("reservationStore", () => {
     }
   };
 
-  return { loading, error, createReservation, fetchReservationById, currentReservation };
+  const getAllReservations = async () => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const res = await fetch("/api/reservations");
+      if (!res.ok) throw new Error("Failed to fetch reservations");
+      reservations.value = await res.json();
+    } catch (err: any) {
+      error.value = err.message || "Error loading reservations";
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  // 🔥 UPDATE RESERVATION BY ID
+  const updateReservation = async (id: number, updatedData: Partial<Reservation>) => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const res = await fetch(`/api/reservations/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (!res.ok) throw new Error("Failed to update reservation");
+
+      const updated = await res.json();
+
+      // update list in store
+      const index = reservations.value.findIndex(r => r.id === id);
+      if (index !== -1) reservations.value[index] = updated;
+
+      return updated;
+    } catch (err: any) {
+      error.value = err.message || "Error updating reservation";
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  // 🔥 DELETE RESERVATION
+  const deleteReservation = async (id: number) => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const res = await fetch(`/api/reservations/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete reservation");
+
+      reservations.value = reservations.value.filter(r => r.id !== id);
+    } catch (err: any) {
+      error.value = err.message || "Error deleting reservation";
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  return { loading, error, createReservation, fetchReservationById, currentReservation, getAllReservations, updateReservation, deleteReservation, reservations };
 });

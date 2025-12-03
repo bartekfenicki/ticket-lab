@@ -146,9 +146,9 @@ const submitReservation = async () => {
     start_time: form.value.time,
     num_people: props.reservationData.numPeople,
     total_price: props.reservationData.totalPrice,
-    payment_method: "unpaid",
+    payment_method: "bank_transfer",
     payment_status: "pending",
-    status: "new",
+    status: "pending_confirmation",
     title: props.reservationData.reservation_option_type.name,
     option_type_id: props.reservationData.reservation_option_type.id,
     selected_variant: props.reservationData.variant || null,
@@ -156,11 +156,12 @@ const submitReservation = async () => {
   };
   if (!route.query.date) throw new Error("Date not provided");
 
-  await reservationStore.createReservation(payload);
+  const newReservation = await reservationStore.createReservation(payload);
 
+  // 🔥 REDIRECT WITH REAL ID
   router.push({
     name: "reservationReceipt",
-    query: { data: JSON.stringify(payload), id: payload.id },
+    query: { id: newReservation.id },
   });
 };
 

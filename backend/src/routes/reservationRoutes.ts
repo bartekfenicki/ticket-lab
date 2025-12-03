@@ -5,6 +5,8 @@ import {
   createNewReservation,
   updateExistingReservation,
   deleteExistingReservation,
+  sendReservationByEmail,
+  // sendReservationByEmail,
 } from "../controllers/reservationController.js";
 
 const router = Router();
@@ -91,5 +93,7 @@ router.put("/:id", updateExistingReservation);
  *         description: Deleted
  */
 router.delete("/:id", deleteExistingReservation);
+
+router.get("/:id/by-email", sendReservationByEmail);
 
 export default router;

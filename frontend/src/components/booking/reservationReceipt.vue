@@ -31,7 +31,7 @@
             <strong>Add-Ons:</strong> {{ reservation.selected_add_ons.map(a => a.name).join(", ") }}
           </li>
           <li><strong>Total Price:</strong> {{ reservation.total_price }} PLN</li>
-          <li><strong>Date:</strong> {{ reservation.date }}</li>
+          <li><strong>Date:</strong> {{ formatDate(reservation.date) }}</li>
           <li><strong>Start Time:</strong> {{ reservation.start_time }}</li>
         </ul>
       </div>
@@ -60,22 +60,46 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useReservationStore } from "@/stores/reservationStore";
 
 const route = useRoute();
 const reservationStore = useReservationStore();
 const reservationId = Number(route.query.id); // Pass reservation ID in query param
-
+console.log(reservationId)
 onMounted(async () => {
   if (reservationId) {
     await reservationStore.fetchReservationById(reservationId);
   }
+
+  await sendReservationEmail(reservationId);
 });
 
-const reservation = reservationStore.currentReservation;
+const reservation = computed(() => reservationStore.currentReservation);
+
+console.log(reservation)
 
 const formatPrice = (price: number, type: string) =>
   type === "per_person" ? `${price} PLN / person` : `${price} PLN`;
+
+  const formatDate = (date: string | Date) => {
+  const d = new Date(date);
+  return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+};
+
+
+const sendReservationEmail = async (id: number) => {
+  try {
+    const res = await fetch(`/api/reservations/${id}/by-email`, {
+      method: "GET",
+    });
+
+    if (!res.ok) throw new Error("Email failed to send");
+
+    console.log("📨 Reservation confirmation email sent to admin.");
+  } catch (err) {
+    console.error("❌ Failed to send reservation email:", err);
+  }
+};
 </script>

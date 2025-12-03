@@ -113,15 +113,32 @@ export const updateReservation = async (
   id: number,
   data: Partial<Reservation>
 ): Promise<Reservation | null> => {
-  const fields = Object.keys(data);
-  const values = Object.values(data);
+  // Remove updated_at if the frontend sent it
+  const filteredData = { ...data };
+  delete filteredData.updated_at;
 
-  if (fields.length === 0) return null;
+  const fields = Object.keys(filteredData);
+  const values = Object.values(filteredData);
 
-  const setString = fields.map((f, i) => `${f}=$${i + 1}`).join(", ");
+  // If no fields to update → only bump updated_at
+  if (fields.length === 0) {
+    const result = await pool.query(
+      `UPDATE reservations
+       SET updated_at = NOW()
+       WHERE id = $1
+       RETURNING *`,
+      [id]
+    );
+    return result.rows[0] || null;
+  }
+
+  const setString = fields
+    .map((field, i) => `${field}=$${i + 1}`)
+    .join(", ");
 
   const result = await pool.query(
-    `UPDATE reservations SET ${setString}, updated_at = NOW()
+    `UPDATE reservations
+     SET ${setString}, updated_at = NOW()
      WHERE id = $${fields.length + 1}
      RETURNING *`,
     [...values, id]
