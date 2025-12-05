@@ -107,6 +107,35 @@ export const useTicketStore = defineStore("ticketStore", () => {
     }
   };
 
+ const updateTicket = async (id: number, data: Partial<Ticket>) => {
+  loading.value = true;
+  error.value = null;
+
+  try {
+    const res = await fetch(`/api/tickets/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) throw new Error("Failed to update ticket");
+
+    const updated: Ticket = await res.json();
+
+    // Update local state safely
+    tickets.value = tickets.value.map(t =>
+      t.id === id ? { ...t, ...updated } : t
+    );
+
+    return updated;
+  } catch (err: any) {
+    error.value = err.message || "Error updating ticket";
+    return null;
+  } finally {
+    loading.value = false;
+  }
+};
+
   return {
     tickets,
     loading,
@@ -115,6 +144,7 @@ export const useTicketStore = defineStore("ticketStore", () => {
     fetchTicketById, // <-- added here
     fetchAllTickets,
     createTicket,
+    updateTicket
   };
 });
 

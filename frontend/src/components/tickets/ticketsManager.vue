@@ -51,6 +51,20 @@
             <p><strong>Total Price:</strong> {{ ticket.total_price }} PLN</p>
             <p><strong>Payment Status:</strong> {{ ticket.payment_status }}</p>
             <p><strong>Used:</strong> {{ ticket.used ? "Yes" : "No" }}</p>
+
+            <button
+                @click="downloadTicket(ticket)"
+                class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+              >
+                Download PDF
+              </button>
+
+              <button
+            @click="togglePayStatus(ticket)"
+            class="px-4 py-2 ms-2 bg-green-600 text-white rounded-lg"
+          >
+            Mark Payment Status as {{ ticket.payment_status === 'pending' ? 'Paid' : 'Pending' }}
+          </button>
           </div>
         </div>
         <div v-else class="text-gray-500">No tickets found.</div>
@@ -69,8 +83,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useTicketStore } from '@/stores/ticketStore'
+import { useTicketStore, type Ticket } from '@/stores/ticketStore'
 import { storeToRefs } from 'pinia'
+import jsPDF from "jspdf";
+import QRCode from "qrcode";
 
 // Pinia store
 const ticketStore = useTicketStore()
@@ -127,6 +143,126 @@ const filteredTickets = computed(() => {
     return matches
   })
 })
+
+const togglePayStatus = async (ticket: Ticket) => {
+  const newStatus = ticket.payment_status === "pending" ? "paid" : "pending";
+
+  await ticketStore.updateTicket(ticket.id, {
+    payment_status: newStatus,
+  });
+};
+
+const downloadTicket = async (ticket: Ticket) => {
+  const doc = new jsPDF({
+    orientation: "portrait",
+    unit: "pt",
+    format: "a4",
+  });
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+
+  doc.setFillColor(255, 255, 255);
+  doc.rect(0, 0, pageWidth, 842, "F");
+
+  // Logo
+  const logoUrl = new URL('@/assets/icons/logo/lab-logo.jpeg', import.meta.url).href;
+
+  async function loadImageWithDimensions(
+      url: string
+    ): Promise<{ dataUrl: string; width: number; height: number }> {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          resolve({
+            dataUrl: getBase64(img),
+            width: img.width,
+            height: img.height,
+          });
+        };
+        img.onerror = reject;
+        img.src = url;
+
+        function getBase64(image: HTMLImageElement) {
+          const canvas = document.createElement("canvas");
+          canvas.width = image.width;
+          canvas.height = image.height;
+          const ctx = canvas.getContext("2d")!;
+          ctx.drawImage(image, 0, 0);
+          return canvas.toDataURL("image/jpeg");
+        }
+      });
+    }
+
+  try {
+const { dataUrl, width: imgW, height: imgH } = await loadImageWithDimensions(logoUrl);
+
+const maxWidth = 170;
+const ratio = Math.min(maxWidth / imgW, 1);
+
+doc.addImage(dataUrl, "JPEG", 40, 20, imgW * ratio, imgH * ratio);
+  } catch (e) {
+    console.error("Error loading logo:", e);
+  }
+
+  doc.setFontSize(22);
+  doc.text("Labirynt pod Warszawa Ticket", pageWidth / 2, 80, { align: "center" });
+
+  doc.setFillColor(245, 245, 245);
+  doc.rect(40, 100, pageWidth - 80, 200, "FD");
+
+  doc.setFontSize(12);
+  const startY = 120;
+  const gap = 20;
+
+  doc.text(`Full Name: ${ticket.full_name}`, 60, startY);
+  doc.text(`Email: ${ticket.email}`, 60, startY + gap);
+  doc.text(`Phone: ${ticket.phone || "-"}`, 60, startY + 2 * gap);
+
+  const formattedDate = new Date(ticket.date).toLocaleDateString("pl-PL", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  doc.text(`Date: ${formattedDate}`, 60, startY + 3 * gap);
+  doc.text(`Total Price: ${ticket.total_price} PLN`, 60, startY + 4 * gap);
+  doc.text(`Payment Status: ${ticket.payment_status}`, 60, startY + 5 * gap);
+
+  // Tickets table
+  let y = startY + 120;
+  doc.text("Tickets:", 60, y);
+
+  y += 20;
+
+  doc.setFont("helvetica", "bold");
+  doc.text("Name", 60, y);
+  doc.text("Qty", 200, y);
+  doc.text("Price", 260, y);
+  doc.text("Subtotal", 330, y);
+  doc.setFont("helvetica", "normal");
+
+  y += 15;
+
+  ticket.items.forEach((item) => {
+    doc.text(item.name, 60, y);
+    doc.text(String(item.quantity), 200, y);
+    const price = Number(item.price_at_purchase ?? 0);
+    const qty = Number(item.quantity ?? 0);
+    doc.text(price.toFixed(2), 260, y);
+    doc.text((price * qty).toFixed(2), 330, y);
+    y += 15;
+  });
+
+  // QR Code
+  const qr = await QRCode.toDataURL(ticket.qr_token);
+  doc.addImage(qr, "PNG", pageWidth - 150, 100, 100, 100);
+
+  doc.save(`ticket-${ticket.id}.pdf`);
+};
+
+
+
 </script>
 
 

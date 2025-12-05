@@ -124,6 +124,24 @@ export const getTicketsByEmail = async (req: Request, res: Response) => {
   }
 };
 
+export const updateTicketController = async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.params.id);
+    const data = req.body;
+
+    const updated = await ticketModel.updateTicket(id, data);
+
+    if (!updated) {
+      return res.status(404).json({ error: "Ticket not found" });
+    }
+
+    res.json(updated);
+  } catch (error) {
+    console.error("Update ticket error:", error);
+    res.status(500).json({ error: "Failed to update ticket" });
+  }
+};
+
 
 export const sendTicketByEmail = async (req: Request, res: Response) => {
   try {

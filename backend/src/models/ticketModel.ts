@@ -145,3 +145,34 @@ export const getAllTickets = async (): Promise<Ticket[]> => {
 
   return ticketsWithItems;
 };
+
+export const updateTicket = async (
+  id: number,
+  data: Partial<Ticket>
+): Promise<Ticket | null> => {
+  const fields = Object.keys(data);
+  const values = Object.values(data);
+
+  // Nothing to update
+  if (fields.length === 0) {
+    const result = await pool.query(
+      `SELECT * FROM tickets WHERE id = $1`,
+      [id]
+    );
+    return result.rows[0] || null;
+  }
+
+  const setString = fields
+    .map((field, i) => `${field}=$${i + 1}`)
+    .join(", ");
+
+  const result = await pool.query(
+    `UPDATE tickets
+     SET ${setString}
+     WHERE id = $${fields.length + 1}
+     RETURNING *`,
+    [...values, id]
+  );
+
+  return result.rows[0] || null;
+};

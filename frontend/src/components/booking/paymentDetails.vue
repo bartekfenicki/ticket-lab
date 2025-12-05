@@ -198,7 +198,7 @@ const handlePayment = async () => {
       other_names: bookingData.value.names || "",
       total_price: bookingData.value.totalPrice,
       special_event_id: null, // or from your booking data
-      payment_status: "pending", // default
+      payment_status: "paid", // default
       items: bookingData.value.tickets.map((t: any) => ({
         ticket_type_id: t.id,
         quantity: t.quantity,
