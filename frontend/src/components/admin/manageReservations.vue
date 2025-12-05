@@ -41,6 +41,6 @@ const tabs = [
   { id: 'reservations', name: 'Reservations' },
 ]
 
-const activeTab = ref('optionTypes')
+const activeTab = ref('reservations')
 </script>
 

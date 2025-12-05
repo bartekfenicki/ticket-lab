@@ -42,17 +42,22 @@
 
       <!-- Calendar Days -->
       <div class="grid grid-cols-7 gap-1 text-center">
-        <div v-for="n in firstDayOfMonth" :key="'empty-' + n"></div>
-        <button
-          v-for="day in daysInMonth"
-          :key="day"
-          @click="selectDate(day)"
-          class="relative p-2 rounded-lg transition-all duration-150 font-medium"
-          :class="dayClass(day)"
-        >
-          {{ day }}
-        </button>
-      </div>
+      <div v-for="n in firstDayOfMonth" :key="'empty-' + n"></div>
+      <button
+        v-for="day in daysInMonth"
+        :key="day"
+        @click="selectDate(day)"
+        class="relative p-2 rounded-lg transition-all duration-150 font-medium flex flex-col items-center"
+        :class="dayClass(day)"
+      >
+        <span>{{ day }}</span>
+        <!-- Dot underneath -->
+       <span
+        v-if="reservations.reservations.length && hasReservation(day) && activeTab === 'Reservations'"
+        class="mt-1 w-2 h-2 rounded-full bg-indigo-600"
+      ></span>
+      </button>
+    </div>
 
       <!-- Selected Date + Event Info -->
       <div
@@ -70,10 +75,43 @@
           <p class="font-semibold text-yellow-700">{{ selectedEvent.title }}</p>
           <p class="text-yellow-600">{{ selectedEvent.description }}</p>
         </div>
+<div v-if="activeTab === 'Reservations'" class="w-full">
+       <div v-if="selectedReservations.length" class="mt-4 w-full">
+  <!-- Slots Info -->
+  <div class="flex justify-between items-center mb-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg shadow-sm">
+    <p class="text-gray-700 font-medium">
+      Reservations: <span class="font-semibold text-gray-800">{{ selectedReservations.length }}/8</span>
+    </p>
+    <p class="text-gray-500 text-sm">
+      {{ 8 - selectedReservations.length }} slots left
+    </p>
+  </div>
 
+  <!-- Reservation Cards -->
+  <div class="space-y-3">
+    <div
+      v-for="res in selectedReservations"
+      :key="res.id"
+      class="bg-white border border-gray-200 p-4 rounded-xl shadow hover:shadow-lg transition-shadow duration-200 flex justify-between items-center"
+    >
+      <div class="flex flex-col text-left">
+        <p class="font-semibold text-gray-800 text-lg">{{ res.title }}</p>
+        <p class="text-gray-500 text-sm">
+         Start time: <span class="font-semibold text-green-600">{{ res.start_time ? res.start_time.slice(0,5) : formatTime(res.date) }} </span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Optional: Empty state if no reservations -->
+  <div v-else  class="mt-4 w-full px-4 py-6 text-center text-gray-400 border border-dashed border-gray-200 rounded-lg">
+    No reservations for this day
+  </div>
+</div>
         <button
           @click="goToBooking"
-          class="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
+          :disabled="selectedReservations.length >= 8"
+          class="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {{ activeTab === 'Tickets' ? 'Book Tickets' : 'Book Reservation' }}
         </button>
@@ -83,12 +121,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSpecialEventsStore } from '@/stores/specialEventsStore'
+import { useReservationStore } from '@/stores/reservationStore'
 
 const router = useRouter()
 const events = useSpecialEventsStore()
+const reservations = useReservationStore()
 
 // Tabs
 const tabs = ['Tickets', 'Reservations']
@@ -102,14 +142,9 @@ const selectedDate = ref<Date | null>(today)
 
 onMounted(async () => {
   await events.fetchEvents()
-
-  // if (events.events.length > 0) {
-  //   const firstEvent = events.events[0]
-  //   const d = new Date(firstEvent.date)
-
-  //   currentMonth.value = d.getMonth()
-  //   currentYear.value = d.getFullYear()
-  // }
+  await reservations.getAllReservations()
+  console.log("Reservations loaded:", reservations.reservations)
+  console.log("By date:", reservationsByDate.value)
 })
 
 const monthNames = [
@@ -124,6 +159,13 @@ const daysInMonth = computed(() => new Date(currentYear.value, currentMonth.valu
 // First day offset
 const firstDayOfMonth = computed(() => new Date(currentYear.value, currentMonth.value, 1).getDay())
 
+watch(
+  () => reservations.reservations,
+  (newVal) => {
+    console.log("Reservations updated:", newVal)
+  },
+  { deep: true }
+)
 
 
 // Load events from store
@@ -134,6 +176,41 @@ const eventsByDate = computed(() => {
   })
   return map
 })
+
+const reservationsByDate = computed(() => {
+  const map: Record<string, any[]> = {} // array of reservations per day
+  reservations.reservations?.forEach(reservation => {
+    if (reservation?.date) {
+      const d = new Date(reservation.date)
+      const dateKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
+      if (!map[dateKey]) map[dateKey] = []
+      map[dateKey].push(reservation)
+    }
+  })
+
+  // Optional: sort each day's reservations by time
+  Object.values(map).forEach(arr => arr.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()))
+
+  return map
+})
+
+const hasReservation = (day: number) => {
+  const key = `${currentYear.value}-${String(currentMonth.value + 1).padStart(2,'0')}-${String(day).padStart(2,'0')}`
+  return !!reservationsByDate.value[key]
+}
+
+const selectedReservations = computed(() => {
+  if (!selectedDate.value) return []
+  const key = `${selectedDate.value.getFullYear()}-${String(selectedDate.value.getMonth() + 1).padStart(2,'0')}-${String(selectedDate.value.getDate()).padStart(2,'0')}`
+  return reservationsByDate.value[key] || []
+})
+
+const formatTime = (isoDate: string) => {
+  const d = new Date(isoDate)
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
+}
+
+console.log(hasReservation)
 
 // Check if a day has an event
 const hasEvent = (day: number) => {

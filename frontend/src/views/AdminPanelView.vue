@@ -23,7 +23,7 @@
 
       <!-- Tab Content -->
       <div class="bg-white shadow rounded-lg p-6">
-        <component :is="currentTabComponent" />
+        <component :is="currentTabComponent" @switch-tab="currentTab = $event" />
       </div>
     </div>
   </div>
@@ -35,15 +35,18 @@ import UsersTab from "@/components/admin/addUsers.vue"
 import TicketsTab from "@/components/admin/manageTickets.vue"
 import ReservationsTab from "@/components/admin/manageReservations.vue"
 import StatisticsTab from "@/components/admin/displayStatistics.vue"
+import MainTab from "@/components/admin/mainPanel.vue"
 // Tabs definition
 const tabs = [
+  {key: "main", label: "Main", component: MainTab },
   { key: "users", label: "Users", component: UsersTab },
   {key: "tickets", label: "Tickets", component: TicketsTab },
   {key: "reservations", label: "Reservations", component: ReservationsTab },
-  {key: "statistics", label: "Statistics", component: StatisticsTab }
+  {key: "statistics", label: "Statistics", component: StatisticsTab },
+
 ]
 
-const currentTab = ref("events")
+const currentTab = ref("main")
 
 // Dynamically resolve component
 const currentTabComponent = computed(() => {

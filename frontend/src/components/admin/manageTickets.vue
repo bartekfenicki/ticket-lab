@@ -39,6 +39,6 @@ const tabs = [
   { id: 'ticket', name: 'Tickets' },
 ]
 
-const activeTab = ref('types')
+const activeTab = ref('ticket')
 </script>
 
