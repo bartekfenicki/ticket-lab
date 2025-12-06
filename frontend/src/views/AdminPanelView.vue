@@ -36,6 +36,7 @@ import TicketsTab from "@/components/admin/manageTickets.vue"
 import ReservationsTab from "@/components/admin/manageReservations.vue"
 import StatisticsTab from "@/components/admin/displayStatistics.vue"
 import MainTab from "@/components/admin/mainPanel.vue"
+import DaysManagementTab from "@/components/admin/daysManagement.vue"
 // Tabs definition
 const tabs = [
   {key: "main", label: "Main", component: MainTab },
@@ -43,6 +44,7 @@ const tabs = [
   {key: "tickets", label: "Tickets", component: TicketsTab },
   {key: "reservations", label: "Reservations", component: ReservationsTab },
   {key: "statistics", label: "Statistics", component: StatisticsTab },
+  {key: "days", label: "Days Panel", component: DaysManagementTab },
 
 ]
 

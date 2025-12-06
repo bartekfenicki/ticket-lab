@@ -44,17 +44,22 @@
       <div class="grid grid-cols-7 gap-1 text-center">
       <div v-for="n in firstDayOfMonth" :key="'empty-' + n"></div>
       <button
-        v-for="day in daysInMonth"
-        :key="day"
-        @click="selectDate(day)"
-        class="relative p-2 rounded-lg transition-all duration-150 font-medium flex flex-col items-center"
-        :class="dayClass(day)"
-      >
+          v-for="day in daysInMonth"
+          :key="day"
+          @click="!isClosedDay(day) && selectDate(day)"
+          :disabled="isClosedDay(day)"
+          :class="dayClass(day)"
+          class="relative p-2 rounded-lg flex flex-col items-center"
+        >
         <span>{{ day }}</span>
         <!-- Dot underneath -->
        <span
         v-if="reservations.reservations.length && hasReservation(day) && activeTab === 'Reservations'"
         class="mt-1 w-2 h-2 rounded-full bg-indigo-600"
+      ></span>
+      <span
+        v-if="isClosedDay(day)"
+        class="absolute bottom-1 w-2 h-2 bg-red-600 rounded-full"
       ></span>
       </button>
     </div>
@@ -109,8 +114,9 @@
   </div>
 </div>
         <button
+          v-if="isSelectedDateInFutureOrToday"
           @click="goToBooking"
-          :disabled="selectedReservations.length >= 8"
+          :disabled="selectedReservations.length >= 8 || isClosedDay(selectedDate.getDate())"
           class="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {{ activeTab === 'Tickets' ? 'Book Tickets' : 'Book Reservation' }}
@@ -125,10 +131,12 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSpecialEventsStore } from '@/stores/specialEventsStore'
 import { useReservationStore } from '@/stores/reservationStore'
+import { useClosedDaysStore } from '@/stores/closedDaysStore'
 
 const router = useRouter()
 const events = useSpecialEventsStore()
 const reservations = useReservationStore()
+const closedDays = useClosedDaysStore()
 
 // Tabs
 const tabs = ['Tickets', 'Reservations']
@@ -143,6 +151,9 @@ const selectedDate = ref<Date | null>(today)
 onMounted(async () => {
   await events.fetchEvents()
   await reservations.getAllReservations()
+    await closedDays.fetchClosedDays()
+
+  console.log("Closed days:", closedDays.byDate)
   console.log("Reservations loaded:", reservations.reservations)
   console.log("By date:", reservationsByDate.value)
 })
@@ -227,19 +238,40 @@ const selectedEvent = computed(() => {
 
 // Button classes for calendar days
 const dayClass = (day: number) => {
-  const classes = ['p-2', 'rounded-lg', 'transition-all', 'duration-150', 'font-medium']
+  const cls = [
+    "relative",
+    "p-2",
+    "rounded-lg",
+    "transition-all",
+    "duration-150",
+    "font-medium"
+  ]
+
+  // Closed days (priority)
+  if (isClosedDay(day)) {
+    cls.push(
+      "bg-red-100",
+      "opacity-50",
+      "cursor-not-allowed",
+      "text-red-700",
+      "font-semibold"
+    )
+    return cls.join(" ")
+  }
+
   if (selectedDate.value?.getDate() === day &&
       selectedDate.value?.getMonth() === currentMonth.value &&
       selectedDate.value?.getFullYear() === currentYear.value) {
-    classes.push('bg-green-600', 'text-white')
+    cls.push("bg-green-600", "text-white")
   } else if (hasEvent(day)) {
-    classes.push('bg-yellow-800', 'text-white', 'hover:bg-green-800')
+    cls.push("bg-yellow-800", "text-white", "hover:bg-green-800")
   } else if (isToday(day)) {
-    classes.push('border', 'border-green-600')
+    cls.push("border", "border-green-600")
   } else {
-    classes.push('hover:bg-green-100')
+    cls.push("hover:bg-green-100")
   }
-  return classes.join(' ')
+
+  return cls.join(" ")
 }
 
 const isToday = (day: number) => (
@@ -247,6 +279,13 @@ const isToday = (day: number) => (
   currentMonth.value === today.getMonth() &&
   currentYear.value === today.getFullYear()
 )
+
+const isClosedDay = (day: number) => {
+  if (!day) return false;
+
+  const date = `${currentYear.value}-${pad(currentMonth.value + 1)}-${pad(day)}`;
+  return !!closedDays.byDate?.[date];
+};
 
 const prevMonth = () => {
   if (currentMonth.value === 0) {
@@ -277,6 +316,18 @@ const pad = (n: number) => String(n).padStart(2, '0')
 const selectDate = (day: number) => {
   selectedDate.value = new Date(currentYear.value, currentMonth.value, day, 0,0,0,0)
 }
+
+const isSelectedDateInFutureOrToday = computed(() => {
+  if (!selectedDate.value) return false;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const sel = new Date(selectedDate.value);
+  sel.setHours(0, 0, 0, 0);
+
+  return sel >= today;
+});
 
 // Navigate to booking page with selected date
 const goToBooking = () => {

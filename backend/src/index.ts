@@ -12,6 +12,9 @@ import reservationOptionTypesRoutes from "./routes/reservationOptionTypesRoutes.
 import reservationOptionsRoutes from "./routes/reservationOptionsRoutes.js";
 import addOnRoutes from "./routes/addOnRoutes.js";
 import optionTypeVariantsRoutes from "./routes/optionTypeVariantsRoutes.js";
+import closedDaysRoutes from "./routes/closedDaysRoutes.js";
+import openingHoursRoutes from "./routes/openingHoursRoutes.js";
+import emailLogsRoutes from "./routes/emailLogsRoutes.js";
 
 dotenv.config();
 
@@ -30,6 +33,9 @@ app.use("/api/reservation-option-types", reservationOptionTypesRoutes);
 app.use("/api/reservation-options", reservationOptionsRoutes);
 app.use("/api/addons", addOnRoutes);
 app.use("/api/option-type-variants", optionTypeVariantsRoutes);
+app.use("/api/closed-days", closedDaysRoutes);
+app.use("/api/opening-hours", openingHoursRoutes);
+app.use("/api/email-logs", emailLogsRoutes);
 
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
