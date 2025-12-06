@@ -11,7 +11,7 @@ export interface EmailLog {
 // Get all logs
 export const getAllEmailLogs = async (): Promise<EmailLog[]> => {
   const result = await pool.query(
-    "SELECT * FROM email_logs ORDER BY sent_at DESC"
+    "SELECT * FROM emails_log ORDER BY sent_at DESC"
   );
   return result.rows;
 };
@@ -19,7 +19,7 @@ export const getAllEmailLogs = async (): Promise<EmailLog[]> => {
 // Get log by ID
 export const getEmailLogById = async (id: number): Promise<EmailLog | null> => {
   const result = await pool.query(
-    "SELECT * FROM email_logs WHERE id = $1",
+    "SELECT * FROM emails_log WHERE id = $1",
     [id]
   );
   return result.rows[0] || null;
@@ -32,7 +32,7 @@ export const createEmailLog = async (
   type: string
 ): Promise<EmailLog> => {
   const result = await pool.query(
-    `INSERT INTO email_logs (email, subject, type, sent_at)
+    `INSERT INTO emails_log (email, subject, type, sent_at)
      VALUES ($1, $2, $3, NOW())
      RETURNING *`,
     [email, subject, type]
@@ -43,7 +43,7 @@ export const createEmailLog = async (
 // Delete log
 export const deleteEmailLog = async (id: number): Promise<boolean> => {
   const result = await pool.query(
-    "DELETE FROM email_logs WHERE id = $1",
+    "DELETE FROM emails_log WHERE id = $1",
     [id]
   );
   return result.rowCount! > 0;

@@ -63,17 +63,23 @@
 import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useReservationStore } from "@/stores/reservationStore";
+import { useEmailLogsStore } from "@/stores/emailsLogStore";
 
 const route = useRoute();
 const reservationStore = useReservationStore();
 const reservationId = Number(route.query.id); // Pass reservation ID in query param
+const emailLogsStore = useEmailLogsStore();
 console.log(reservationId)
 onMounted(async () => {
   if (reservationId) {
     await reservationStore.fetchReservationById(reservationId);
   }
 
-  await sendReservationEmail(reservationId);
+ if (reservation.value) {
+    await sendReservationEmail(reservation.value);
+  } else {
+    console.error("❌ Reservation not found");
+  }
 });
 
 const reservation = computed(() => reservationStore.currentReservation);
@@ -89,17 +95,29 @@ const formatPrice = (price: number, type: string) =>
 };
 
 
-const sendReservationEmail = async (id: number) => {
+const sendReservationEmail = async (reservationData: any) => {
   try {
-    const res = await fetch(`/api/reservations/${id}/by-email`, {
+    // Send the email via backend endpoint
+    const res = await fetch(`/api/reservations/${reservationData.id}/by-email`, {
       method: "GET",
     });
 
     if (!res.ok) throw new Error("Email failed to send");
 
     console.log("📨 Reservation confirmation email sent to admin.");
+
+    // Create email log
+    const emailLogPayload = {
+      email: reservationData.email,
+      subject: `Reservation Confirmation #${reservationData.id}`,
+      type: "reservation",
+      sent_at: new Date().toISOString(),
+    };
+
+    await emailLogsStore.createEmailLog(emailLogPayload);
+    console.log("✅ Email log created for reservation.");
   } catch (err) {
-    console.error("❌ Failed to send reservation email:", err);
+    console.error("❌ Failed to send reservation email or log:", err);
   }
 };
 </script>

@@ -51,9 +51,11 @@ import { useRoute } from 'vue-router'
 import { useTicketStore } from '@/stores/ticketStore'
 import jsPDF from "jspdf"; // jsPDF is typed automatically
 import QRCode from "qrcode"; // QRCode is typed
+import { useEmailLogsStore } from "@/stores/emailsLogStore";
 
 const route = useRoute()
 const ticketStore = useTicketStore()
+const emailLogsStore = useEmailLogsStore();
 
 const ticket = ref<any>(null)
 const loading = ref(true)
@@ -269,11 +271,22 @@ const sendTicketByEmail = async () => {
 
     if (!res.ok) throw new Error("Failed to send email");
 
+    const emailLogPayload = {
+      email: ticket.value.email,
+      subject: `Ticket with an ID of ${ticket.value.id} sent by mail to ${ticket.value.full_name}`,
+      type: "ticket",
+      sent_at: new Date().toISOString(),
+    };
+
+    await emailLogsStore.createEmailLog(emailLogPayload);
+    console.log("✅ Email log created for reservation.");
+
     alert("📨 Ticket sent to email!");
   } catch (err) {
     alert("❌ Email sending failed: " + err.message);
   }
 };
+
 </script>
 
 
