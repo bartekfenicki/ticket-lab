@@ -78,7 +78,7 @@
         </div>
 
         <div
-            v-if="activeTab === 'Tickets'"
+            v-if="activeTab === 'Tickets' && isSelectedDateInFutureOrToday"
             class="w-full mt-4 px-3 py-3 border border-gray-200 rounded-lg bg-blue-50 shadow-sm text-center"
           >
             <p class="text-gray-700 font-medium">
