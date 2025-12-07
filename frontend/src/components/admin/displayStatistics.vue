@@ -10,8 +10,8 @@
         :class="[
           'px-4 py-2 font-medium transition-colors',
           activeTab === tab.id
-            ? 'border-b-2 border-indigo-600 text-indigo-600'
-            : 'text-gray-600 hover:text-indigo-600'
+            ? 'border-b-2 border-green-600 text-green-600'
+            : 'text-gray-600 hover:text-green-600'
         ]"
       >
         {{ tab.name }}

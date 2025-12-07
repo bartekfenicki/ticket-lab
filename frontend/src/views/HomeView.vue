@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="w-full">
     <div class="pt-16 w-full">
         <ParkMap/>
       </div>

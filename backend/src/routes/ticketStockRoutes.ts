@@ -7,6 +7,7 @@ import {
   deleteExistingStock,
   fetchStockByDate,
   upsertStockController,
+  updateSoldQuantityController,
 } from "../controllers/ticketStockController.js";
 
 const router = Router();
@@ -67,6 +68,11 @@ router.get("/:id", getStock);
  */
 router.post("/", createNewStock);
 
+
+router.put("/upsert", upsertStockController);
+
+router.put("/update-sold", updateSoldQuantityController);
+
 /**
  * @swagger
  * /api/ticket-stock/{id}:
@@ -85,7 +91,7 @@ router.post("/", createNewStock);
  */
 router.put("/:id", updateExistingStock);
 
-router.put("/upsert", upsertStockController);
+
 
 /**
  * @swagger
@@ -102,5 +108,6 @@ router.put("/upsert", upsertStockController);
  *         description: Deleted
  */
 router.delete("/:id", deleteExistingStock);
+
 
 export default router;

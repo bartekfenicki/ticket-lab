@@ -56,20 +56,27 @@ export const createNewStock = async (req: Request, res: Response) => {
 export const updateExistingStock = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
 
+  console.log("🟣 updateExistingStock(): incoming request");
+  console.log("➡️ id:", id);
+  console.log("➡️ req.body:", req.body);
+
   try {
     const updated = await ticketStockModel.updateStock(id, req.body);
+
     if (!updated) {
       return res.status(404).json({ error: "Stock record not found" });
     }
 
     res.json(updated);
   } catch (err) {
-    console.error("Error updating stock:", err);
+    console.error("❌ Error updating stock:", err);
     res.status(500).json({ error: "Server error" });
   }
 };
 
 export const upsertStockController = async (req: Request, res: Response) => {
+   console.log("🟣 UPSERT REQUEST RECEIVED");
+  console.log("req.body:", req.body);
   try {
     const stock = await ticketStockModel.upsertStock(req.body)
     res.json(stock)
@@ -88,6 +95,22 @@ export const deleteExistingStock = async (req: Request, res: Response) => {
     res.json({ message: "Stock entry deleted" });
   } catch (err) {
     console.error("Error deleting stock:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+
+export const updateSoldQuantityController = async (req: Request, res: Response) => {
+  const { date, increment } = req.body;
+
+  console.log("🟣 updateSoldQuantityController()");
+  console.log("date:", date, "increment:", increment);
+
+  try {
+    const updated = await ticketStockModel.incrementSoldQuantity(date, increment);
+    res.json(updated);
+  } catch (err) {
+    console.error("❌ Error updating sold quantity:", err);
     res.status(500).json({ error: "Server error" });
   }
 };

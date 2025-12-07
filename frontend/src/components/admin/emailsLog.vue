@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-6xl mx-auto p-6 bg-white rounded-xl shadow-md">
-    <h1 class="text-2xl font-bold mb-4 text-gray-800">Email Logs</h1>
+    <h1 class="text-2xl text-green-700 font-bold mb-4">Email Logs</h1>
 
     <!-- Filters -->
     <div class="flex flex-col sm:flex-row gap-4 mb-6 items-center">
@@ -30,23 +30,24 @@
       <!-- Refresh Button -->
       <button
         @click="fetchLogs"
-        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+        class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-blue-700 transition"
       >
         Refresh
       </button>
     </div>
 
     <!-- Table -->
-    <div v-if="loading" class="text-gray-500">Loading email logs...</div>
-    <div v-else>
-      <table class="w-full border-collapse">
-        <thead>
-          <tr class="bg-gray-100 text-left">
-            <th class="p-3 border-b">ID</th>
-            <th class="p-3 border-b">Email</th>
-            <th class="p-3 border-b">Subject</th>
-            <th class="p-3 border-b">Type</th>
-            <th class="p-3 border-b">Sent At</th>
+    <!-- Table Wrapper for Scroll -->
+     <div v-if="loading" class="text-gray-500">Loading email logs...</div>
+    <div v-else class="overflow-x-auto w-full border rounded-lg shadow-sm">
+      <table class="min-w-[700px] w-full border-collapse">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="p-3 border-b text-left">ID</th>
+            <th class="p-3 border-b text-left">Email</th>
+            <th class="p-3 border-b text-left">Subject</th>
+            <th class="p-3 border-b text-left">Type</th>
+            <th class="p-3 border-b text-left">Sent At</th>
           </tr>
         </thead>
         <tbody>
@@ -63,10 +64,10 @@
           </tr>
         </tbody>
       </table>
+    </div>
 
-      <div v-if="filteredLogs.length === 0" class="mt-4 text-gray-400 text-center">
-        No logs match the filters.
-      </div>
+    <div v-if="filteredLogs.length === 0" class="mt-4 text-gray-400 text-center">
+      No logs match the filters.
     </div>
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div class="p-8 max-w-6xl mx-auto">
-    <h1 class="text-3xl font-bold text-indigo-700 mb-6">
+    <h1 class=" text-2xl md:text-3xl font-bold text-green-700 mb-6">
       Ticket Sales & Revenue Dashboard
     </h1>
 
@@ -13,14 +13,14 @@
 
       <div class="bg-white p-4 shadow rounded-xl border">
         <h3 class="font-semibold text-gray-600">Sold Tickets</h3>
-        <p class="text-2xl font-bold text-indigo-600">
+        <p class="text-2xl font-bold text-yellow-600">
           {{ stats.paidTickets.length }}
         </p>
       </div>
 
       <div class="bg-white p-4 shadow rounded-xl border">
         <h3 class="font-semibold text-gray-600">Selected Month Revenue</h3>
-        <p class="text-2xl font-bold text-blue-600">
+        <p class="text-2xl font-bold text-yellow-800">
           {{ selectedMonthRevenue }} PLN
         </p>
       </div>

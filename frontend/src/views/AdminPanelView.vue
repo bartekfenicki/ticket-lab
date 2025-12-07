@@ -2,10 +2,10 @@
   <div class="min-h-screen bg-gray-100 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Dashboard Header -->
-      <h1 class="text-3xl font-bold mb-6">Admin Dashboard</h1>
+      <h1 class="text-3xl text-center sm:text-start font-bold mb-6">Admin Dashboard</h1>
 
       <!-- Tabs -->
-      <div class="flex space-x-4 border-b mb-6">
+      <div class="flex space-x-4 border-b mb-6 overflow-x-scroll">
         <button
           v-for="tab in tabs"
           :key="tab.key"
@@ -13,8 +13,8 @@
           :class="[
             'px-4 py-2 font-medium border-b-2 transition',
             currentTab === tab.key
-              ? 'border-blue-600 text-blue-600'
-              : 'border-transparent text-gray-600 hover:text-blue-500'
+              ? 'border-green-600 text-green-600'
+              : 'border-transparent text-gray-600 hover:text-green-500'
           ]"
         >
           {{ tab.label }}
@@ -22,7 +22,7 @@
       </div>
 
       <!-- Tab Content -->
-      <div class="bg-white shadow rounded-lg p-6">
+      <div class="bg-white shadow rounded-lg p-0 sm:p-6">
         <component :is="currentTabComponent" @switch-tab="currentTab = $event" />
       </div>
     </div>

@@ -7,7 +7,7 @@ export interface TicketStock {
   date: string
   total_quantity: number
   sold_quantity: number
-  modified_by?: string
+  modified_by?: string | null
   updated_at?: string
 }
 
@@ -79,6 +79,8 @@ export const useTicketStockStore = defineStore('ticketStock', {
     },
 
     async upsertStock(stock: Omit<TicketStock, "id" | "updated_at">) {
+        console.log("🟠 FRONTEND UPSERT CALLED");
+        console.log("➡️ Sending payload:", stock);
       this.loading = true
       try {
         const res = await fetch('/api/ticket-stock/upsert', {
@@ -88,8 +90,10 @@ export const useTicketStockStore = defineStore('ticketStock', {
         })
         if (!res.ok) throw new Error("Failed to save stock")
         const data = await res.json()
-
-        const index = this.stocks.findIndex(s => s.date === data.date)
+    console.log("🟢 UPSERT RESPONSE:", data);
+        const index = this.stocks.findIndex(
+            (s) => s.date.slice(0, 10) === data.date && s.ticket_type_id === data.ticket_type_id
+          )
         if (index !== -1) this.stocks[index] = data
         else this.stocks.push(data)
 
@@ -119,6 +123,28 @@ export const useTicketStockStore = defineStore('ticketStock', {
       } finally {
         this.loading = false
       }
+    },
+
+    async updateSoldQuantityForDate(date: string, increment: number) {
+      console.log("⬆️ Updating sold quantity for date:", date, "by", increment);
+
+      const res = await fetch("/api/ticket-stock/update-sold", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date, increment }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update sold quantity");
+
+      const updated = await res.json();
+
+      // Update local store
+      const index = this.stocks.findIndex(
+        s => s.date.slice(0, 10) === updated.date
+      );
+      if (index !== -1) this.stocks[index] = updated;
+
+      return updated;
     },
 
     async deleteStock(id: number) {

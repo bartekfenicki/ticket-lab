@@ -41,10 +41,27 @@ export const createStock = async (data: Omit<TicketStock, "id" | "updated_at">) 
 };
 
 export const updateStock = async (id: number, data: Partial<TicketStock>) => {
+  console.log("🔵 UPDATE STOCK CALLED");
+  console.log("➡️ ID:", id);
+  console.log("➡️ Body:", data);
+
   const fields = Object.keys(data);
   const values = Object.values(data);
 
+  console.log("📝 Fields:", fields);
+  console.log("📝 Values:", values);
+
+  fields.forEach((f, i) => {
+    const v = values[i];
+    console.log(`🔍 Checking field "${f}" =`, v, "| isNaN:", isNaN(Number(v)));
+  });
+
   const setString = fields.map((f, i) => `${f}=$${i + 1}`).join(", ");
+
+  console.log("📦 Final SQL:", {
+    query: `UPDATE ticket_stock SET ${setString}, updated_at = NOW() WHERE id = $${fields.length + 1}`,
+    params: [...values, id]
+  });
 
   const result = await pool.query(
     `UPDATE ticket_stock SET ${setString}, updated_at = NOW()
@@ -56,7 +73,22 @@ export const updateStock = async (id: number, data: Partial<TicketStock>) => {
 };
 
 export const upsertStock = async (data: Omit<TicketStock, "id" | "updated_at">) => {
+
+   console.log("🔵 UPSERT CALLED");
+  console.log("➡️ Incoming data:", data);
+
   const { ticket_type_id, date, total_quantity, sold_quantity, modified_by } = data;
+
+
+  console.log("🔍 CHECK FIELDS:");
+  console.log("ticket_type_id:", ticket_type_id, "isNaN:", isNaN(Number(ticket_type_id)));
+  console.log("total_quantity:", total_quantity, "isNaN:", isNaN(Number(total_quantity)));
+  console.log("sold_quantity:", sold_quantity, "isNaN:", isNaN(Number(sold_quantity)));
+
+
+  if (isNaN(ticket_type_id) || isNaN(total_quantity) || isNaN(sold_quantity)) {
+    throw new Error("Invalid numeric field (NaN)");
+  }
 
   const result = await pool.query(
     `INSERT INTO ticket_stock (ticket_type_id, date, total_quantity, sold_quantity, modified_by)
@@ -77,4 +109,18 @@ export const upsertStock = async (data: Omit<TicketStock, "id" | "updated_at">) 
 export const deleteStock = async (id: number) => {
   await pool.query("DELETE FROM ticket_stock WHERE id = $1", [id]);
   return true;
+};
+
+
+export const incrementSoldQuantity = async (date: string, increment: number) => {
+  const result = await pool.query(
+    `UPDATE ticket_stock
+     SET sold_quantity = sold_quantity + $2,
+         updated_at = NOW()
+     WHERE date = $1
+     RETURNING *`,
+    [date, increment]
+  );
+
+  return result.rows[0];
 };

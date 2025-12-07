@@ -5,7 +5,7 @@
     <div v-if="store.loading" class="text-gray-500 mb-4">Loading...</div>
     <div v-if="store.error" class="text-red-500 mb-4">{{ store.error }}</div>
 
-    <div v-for="day in daysOfWeek" :key="day" class="flex items-center justify-between mb-4 p-3 border rounded-lg shadow-sm">
+    <div v-for="day in daysOfWeek" :key="day" class="flex items-center justify-between mb-4 p-3 border rounded-lg shadow-sm overflow-x-auto">
       <div class="font-medium capitalize">{{ day }}</div>
 
       <div class="flex items-center space-x-2">

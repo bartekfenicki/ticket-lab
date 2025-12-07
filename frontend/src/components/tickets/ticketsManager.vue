@@ -1,7 +1,8 @@
 <template>
   <div class="min-h-screen bg-gray-50 py-12 px-4">
-    <div class="max-w-6xl mx-auto bg-white shadow-lg rounded-xl p-8 space-y-6">
-      <h1 class="text-3xl font-bold text-indigo-700 mb-6">🎫 Tickets Manager</h1>
+    <div class="max-w-6xl mx-auto bg-white shadow-lg rounded-xl p-6 md:p-8 space-y-6">
+
+      <h1 class="text-3xl font-bold text-green-700 mb-6">Tickets Manager</h1>
 
       <!-- Filters -->
       <div class="flex flex-wrap gap-4 items-center mb-6">
@@ -9,10 +10,10 @@
           type="text"
           v-model="searchEmail"
           placeholder="Search by email"
-          class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          class="px-3 py-2 border rounded-lg w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-indigo-500"
         />
 
-        <select v-model="paymentFilter" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <select v-model="paymentFilter" class="px-3 py-2 border rounded-lg w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-indigo-500">
           <option value="">All Payment Status</option>
           <option value="pending">Pending</option>
           <option value="paid">Paid</option>
@@ -20,66 +21,95 @@
         </select>
 
         <input
-            type="date"
-            v-model="dateFilter"
-            class="px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
+          type="date"
+          v-model="dateFilter"
+          class="px-3 py-2 border rounded-lg w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
 
-        <label class="flex items-center gap-2">
+        <label class="flex items-center gap-2 w-full sm:w-auto">
           <input type="checkbox" v-model="showUnusedOnly" />
           Show only unused tickets
         </label>
       </div>
 
       <!-- Loading / Error -->
-      <div v-if="loading" class="text-gray-500">Loading tickets...</div>
-      <div v-else-if="error" class="text-red-500">{{ error }}</div>
+      <div v-if="loading" class="text-gray-500 text-center">Loading tickets...</div>
+      <div v-else-if="error" class="text-red-500 text-center">{{ error }}</div>
 
       <!-- Tickets List -->
       <div v-else>
-        <div v-if="filteredTickets.length" class="space-y-4">
-          <div
-            v-for="ticket in filteredTickets"
-            :key="ticket.id"
-            class="p-4 border rounded-lg shadow-sm hover:shadow-md transition"
-          >
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto">
+          <table class="w-full border-collapse border border-gray-300">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="border px-4 py-2 text-left">ID</th>
+                <th class="border px-4 py-2 text-left">Full Name</th>
+                <th class="border px-4 py-2 text-left">Email</th>
+                <th class="border px-4 py-2 text-left">Phone</th>
+                <th class="border px-4 py-2 text-left">Date</th>
+                <th class="border px-4 py-2 text-left">Total Price</th>
+                <th class="border px-4 py-2 text-left">Payment Status</th>
+                <th class="border px-4 py-2 text-left">Used</th>
+                <th class="border px-4 py-2 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="ticket in filteredTickets" :key="ticket.id" class="border-b hover:bg-gray-50">
+                <td class="border px-4 py-2">{{ ticket.id }}</td>
+                <td class="border px-4 py-2">{{ ticket.full_name }}</td>
+                <td class="border px-4 py-2">{{ ticket.email }}</td>
+                <td class="border px-4 py-2">{{ ticket.phone || "-" }}</td>
+                <td class="border px-4 py-2">{{ formatDate(ticket.date) }}</td>
+                <td class="border px-4 py-2">{{ ticket.total_price }} PLN</td>
+                <td class="border px-4 py-2">{{ ticket.payment_status }}</td>
+                <td class="border px-4 py-2">{{ ticket.used ? 'Yes' : 'No' }}</td>
+                <td class="border px-4 py-2 flex gap-2 justify-center">
+                  <button @click="downloadTicket(ticket)" class="bg-yellow-600 text-white px-3 py-1 rounded hover:bg-indigo-700 text-sm">Download PDF</button>
+                  <button @click="togglePayStatus(ticket)" class="bg-green-600 text-white px-3 py-1 rounded text-sm">
+                    Mark as {{ ticket.payment_status === 'pending' ? 'Paid' : 'Pending' }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Card View -->
+        <div class="md:hidden grid gap-4">
+          <div v-for="ticket in filteredTickets" :key="'mobile-'+ticket.id" class="p-4 border rounded-lg bg-white shadow-sm space-y-1">
             <p><strong>ID:</strong> {{ ticket.id }}</p>
-            <p><strong>Full Name:</strong> {{ ticket.full_name }}</p>
+            <p><strong>Name:</strong> {{ ticket.full_name }}</p>
             <p><strong>Email:</strong> {{ ticket.email }}</p>
             <p><strong>Phone:</strong> {{ ticket.phone || "-" }}</p>
             <p><strong>Date:</strong> {{ formatDate(ticket.date) }}</p>
             <p><strong>Total Price:</strong> {{ ticket.total_price }} PLN</p>
-            <p><strong>Payment Status:</strong> {{ ticket.payment_status }}</p>
-            <p><strong>Used:</strong> {{ ticket.used ? "Yes" : "No" }}</p>
-
-            <button
-                @click="downloadTicket(ticket)"
-                class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-              >
-                Download PDF
+            <p><strong>Payment:</strong> {{ ticket.payment_status }}</p>
+            <p><strong>Used:</strong> {{ ticket.used ? 'Yes' : 'No' }}</p>
+            <div class="flex flex-wrap gap-2 mt-2">
+              <button @click="downloadTicket(ticket)" class="bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700 text-sm w-full sm:w-auto">Download</button>
+              <button @click="togglePayStatus(ticket)" class="bg-green-600 text-white px-3 py-1 rounded text-sm w-full sm:w-auto">
+                Mark as {{ ticket.payment_status === 'pending' ? 'Paid' : 'Pending' }}
               </button>
-
-              <button
-            @click="togglePayStatus(ticket)"
-            class="px-4 py-2 ms-2 bg-green-600 text-white rounded-lg"
-          >
-            Mark Payment Status as {{ ticket.payment_status === 'pending' ? 'Paid' : 'Pending' }}
-          </button>
+            </div>
           </div>
         </div>
-        <div v-else class="text-gray-500">No tickets found.</div>
+
+        <div v-if="!filteredTickets.length" class="text-gray-500 text-center mt-4">No tickets found.</div>
       </div>
 
       <!-- Refresh Button -->
       <button
         @click="fetchTickets"
-        class="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+        class="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition w-full sm:w-auto"
       >
         Refresh Tickets
       </button>
+
     </div>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'

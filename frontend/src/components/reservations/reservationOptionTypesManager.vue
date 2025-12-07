@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-5xl mx-auto p-6">
-    <h2 class="text-2xl font-semibold mb-6">Reservation Option Types</h2>
+    <h2 class="text-2xl font-semibold text-green-700 mb-6">Reservation Option Types</h2>
 
     <!-- Error -->
     <div
@@ -25,7 +25,7 @@
           <label class="block text-sm font-medium mb-1">Name</label>
           <input
             v-model="form.name"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-green-200"
             required
           />
         </div>
@@ -37,7 +37,7 @@
             v-model.number="form.default_price"
             type="number"
             min="0"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-green-200"
             required
           />
         </div>
@@ -58,7 +58,7 @@
         <label class="block text-sm font-medium mb-1">Description</label>
         <textarea
           v-model="form.description"
-          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-green-200"
           rows="3"
         ></textarea>
       </div>
@@ -67,7 +67,7 @@
       <div class="mt-6 flex space-x-3">
         <button
           type="submit"
-          class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          class="px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
         >
           {{ editingId ? "Save Changes" : "Create Option Type" }}
         </button>
@@ -124,16 +124,16 @@
                 {{ o.active ? "Yes" : "No" }}
               </span>
             </td>
-            <td class="px-4 py-3 space-x-3">
+            <td class="px-4 py-3 sm:space-x-3">
               <button
                 @click="editOption(o)"
-                class="px-3 py-1 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+                class="px-3 py-1 bg-yellow-600 text-white rounded-lg hover:bg-indigo-700 transition"
               >
                 Edit
               </button>
               <button
                 @click="deleteOption(o.id)"
-                class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                class="px-3 py-1 mt-1 sm:mt-0 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
               >
                 Delete
               </button>

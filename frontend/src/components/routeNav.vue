@@ -2,9 +2,21 @@
   <nav class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16 items-center">
-        <div class="flex">
-          <UserStatus />
-        <OpeningHoursToday/>
+        <div class="flex items-center">
+
+          <div class="flex-shrink-0 md:hidden flex items-center ms-4">
+          <RouterLink to="/" class="flex items-center">
+            <img
+              :src="logo"
+              alt="Logo"
+              class="h-16 w-auto object-contain"
+            />
+          </RouterLink>
+          </div>
+          <div class="hidden md:block">
+            <UserStatus />
+          </div>
+          <OpeningHoursToday/>
         </div>
 
 
@@ -69,6 +81,9 @@
       class="md:hidden bg-white shadow-md border-t border-gray-100"
     >
       <div class="space-y-2 px-4 py-3">
+         <div class="flex w-full justify-end">
+            <UserStatus />
+          </div>
         <RouterLink
           v-for="link in navLinks"
           :key="link.to"

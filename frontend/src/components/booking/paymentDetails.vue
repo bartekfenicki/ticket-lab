@@ -145,14 +145,6 @@
       >
         Proceed to Payment
       </button>
-      <button
-        v-else
-        @click="handleReceipt"
-        class="w-full px-6 py-3 mt-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        Get the receipt
-      </button>
-
     </div>
   </div>
 </template>
@@ -161,6 +153,13 @@
 import { useRoute, useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import { useTicketStore, type Ticket } from '@/stores/ticketStore'
+import { useTicketStockStore } from "@/stores/ticketStockStore";
+
+const ticketStockStore = useTicketStockStore();
+
+async function updateSoldQuantityForDate(date: string, amount: number) {
+  return await ticketStockStore.updateSoldQuantityForDate(date, amount);
+}
 
 const route = useRoute()
 const router = useRouter()
@@ -219,6 +218,16 @@ if (!newTicket?.id) {
 }
 
 console.log("Ticket created successfully:", newTicket);
+
+const totalItemsBought = ticketPayload.items.reduce(
+      (sum, item) => sum + Number(item.quantity),
+      0
+    );
+
+    console.log("Total items purchased:", totalItemsBought);
+
+    // Try updating backend
+    await updateSoldQuantityForDate(ticketPayload.date, totalItemsBought);
 
 
 

@@ -8,7 +8,7 @@ import RouteNav from './components/routeNav.vue';
 <template>
   <RouteNav/>
 
-<div class="mt-16">
+<div class="mt-16 w-full">
   <RouterView/>
 </div>
 

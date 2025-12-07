@@ -31,7 +31,7 @@
         </button>
         <button
             @click="sendTicketByEmail"
-            class="mt-3 ms-4 px-6 py-3 bg-yellow-800 text-white rounded-lg hover:bg-blue-700"
+            class="mt-3 ms-0 sm:ms-4 px-6 py-3 bg-yellow-800 text-white rounded-lg hover:bg-blue-700"
           >
             Send Ticket via Email
           </button>

@@ -1,8 +1,8 @@
 <template>
   <div class="p-8 max-w-6xl mx-auto space-y-8">
     <!-- Title -->
-    <h1 class="text-3xl font-bold text-indigo-700 mb-6">
-      Admin Dashboard - Home
+    <h1 class=" text-2xl sm:text-3xl font-bold text-green-700 mb-6">
+      Main Panel
     </h1>
 
     <!-- Today Summary Cards -->
@@ -13,7 +13,7 @@
         @click="goToTab('reservations')"
       >
         <h3 class="font-semibold text-gray-600 mb-2">Reservations Today</h3>
-        <p class="text-2xl font-bold text-red-600">{{ todaysReservations.length }}</p>
+        <p class="text-2xl font-bold text-yellow-600">{{ todaysReservations.length }}</p>
         <p class="text-gray-500 text-sm">{{ todaysReservations.length < 3 ? 'Few reservations today' : 'Keep track of your reservations' }}</p>
       </div>
 
@@ -33,7 +33,7 @@
         @click="goToTab('statistics')"
       >
         <h3 class="font-semibold text-gray-600 mb-2">Today’s Revenue</h3>
-        <p class="text-2xl font-bold text-blue-600">{{ todaysRevenue }} PLN</p>
+        <p class="text-2xl font-bold text-orange-800">{{ todaysRevenue }} PLN</p>
         <p class="text-gray-500 text-sm">Track your daily sales</p>
       </div>
     </div>

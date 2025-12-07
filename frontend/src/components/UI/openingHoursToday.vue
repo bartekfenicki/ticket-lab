@@ -5,7 +5,7 @@
 
     <div v-else>
       <div v-if="todayOpeningHour">
-        <p class="text-gray-700 font-medium">
+        <p class="text-gray-700 text-xs md:text-md font-medium">
           <span class="capitalize">{{ todayOpeningHour.day_of_week }}</span>:
         <span class="text-green-600 font-semibold">
           {{ formatTime(todayOpeningHour.open_time) }} - {{ formatTime(todayOpeningHour.close_time) }}

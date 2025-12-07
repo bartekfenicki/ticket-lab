@@ -1,7 +1,7 @@
 <template>
-  <h1 class="mb-2 mx-4 md:mx-auto w-full md:w-3/5 font-semibold text-xl">Hover to explore the park!</h1>
+  <h1 class="mb-2 mx-4 md:mx-auto w-full md:max-w-[820px] font-semibold text-xl">Hover to explore the park!</h1>
   <div
-  class="relative mx-auto w-full md:w-3/5 h-[400px] rounded-2xl shadow-lg overflow-hidden grass-bg"
+  class="relative mx-auto w-full md:max-w-[820px] h-[400px] rounded-2xl shadow-lg overflow-hidden grass-bg"
 >
 
     <!-- Background grid / texture placeholder -->
@@ -23,7 +23,7 @@
          <img
             :src="area.icon"
             alt="area"
-            class="w-full h-32 object-cover rounded-md"
+            class="w-full h-20 sm:h-32 object-cover rounded-md"
           />
       </div>
 
@@ -75,10 +75,38 @@ onMounted(() => window.addEventListener('mousemove', handleMouseMove))
 onUnmounted(() => window.removeEventListener('mousemove', handleMouseMove))
 
 // Compute panel style based on cursor position
-const panelPositionStyle = computed(() => ({
-  top: `${mousePos.value.y + 20}px`,
-  left: `${mousePos.value.x + 20}px`,
-}))
+const isMobile = computed(() => window.innerWidth < 1024)
+
+const panelPositionStyle = computed(() => {
+  if (!hoveredArea.value) return {}
+
+  const mouseX = mousePos.value.x
+  const mouseY = mousePos.value.y
+
+  // extract numeric percent from hoveredArea.left ("67%" → 67)
+  const areaLeftPercent = Number(hoveredArea.value.left.replace('%', ''))
+  const isRightSide = areaLeftPercent > 50 // simple logic: right half of map
+
+  let offsetX = 20
+  const offsetY = 20
+
+  // MOBILE BEHAVIOR:
+  // Always flip based on which side the icon is on
+  if (isMobile.value) {
+    offsetX = isRightSide ? -280 : 20 // panel width is ~256px → safe offset
+  } else {
+    // DESKTOP BEHAVIOR:
+    // flip panel based on actual mouse position (near screen edges)
+    if (mouseX + 300 > window.innerWidth) {
+      offsetX = -280 // open LEFT if too close to right edge
+    }
+  }
+
+  return {
+    top: `${mouseY + offsetY}px`,
+    left: `${mouseX + offsetX}px`,
+  }
+})
 
 const areas: Area[] = [
   {

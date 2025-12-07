@@ -1,16 +1,16 @@
 <template>
   <div class="p-6 bg-white rounded-xl shadow-md space-y-6">
     <!-- Tabs -->
-    <div class="flex border-b border-gray-200">
+    <div class="flex border-b border-gray-200 overflow-x-scroll">
       <button
         v-for="tab in tabs"
         :key="tab.id"
         @click="activeTab = tab.id"
         :class="[
-          'px-4 py-2 font-medium transition-colors',
+          'px-4 py-2 min-w-24 font-medium transition-colors',
           activeTab === tab.id
-            ? 'border-b-2 border-indigo-600 text-indigo-600'
-            : 'text-gray-600 hover:text-indigo-600'
+            ? 'border-b-2 border-green-600 text-green-600'
+            : 'text-gray-600 hover:text-green-600'
         ]"
       >
         {{ tab.name }}

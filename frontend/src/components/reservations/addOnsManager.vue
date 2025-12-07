@@ -1,6 +1,6 @@
 <template>
   <div class="p-4">
-    <h2 class="text-2xl font-semibold mb-4">Manage Add-Ons</h2>
+    <h2 class="text-2xl text-green-700 font-semibold mb-4">Manage Add-Ons</h2>
 
     <!-- Select Reservation Option Type -->
     <div class="mb-4">
@@ -15,32 +15,62 @@
     </div>
 
     <!-- Add-On Form -->
-    <div class="mb-6 border p-4 rounded-lg shadow-sm bg-white">
-      <h3 class="text-xl font-medium mb-3">{{ editingId ? "Edit Add-On" : "Create Add-On" }}</h3>
+  <div class="mb-6 border p-4 rounded-lg shadow-sm bg-white">
+  <h3 class="text-xl font-medium mb-3">
+    {{ editingId ? "Edit Add-On" : "Create Add-On" }}
+  </h3>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <input v-model="form.name" type="text" placeholder="Add-On Name" class="border rounded-lg p-2 w-full"/>
-        <input v-model.number="form.price" type="number" placeholder="Price" class="border rounded-lg p-2 w-full"/>
-        <select v-model="form.pricing_type" class="border rounded-lg p-2 w-full">
-          <option value="flat">Flat</option>
-          <option value="per_person">Per Person</option>
-        </select>
-        <textarea v-model="form.description" placeholder="Description" class="border rounded-lg p-2 w-full col-span-3"></textarea>
-        <label class="flex items-center space-x-2">
-          <input type="checkbox" v-model="form.active" class="rounded"/>
-          <span>Active</span>
-        </label>
-      </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <input
+      v-model="form.name"
+      type="text"
+      placeholder="Add-On Name"
+      class="border rounded-lg p-2 w-full"
+    />
 
-      <div class="mt-4 space-x-2">
-        <button @click="handleSubmit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-          {{ editingId ? "Update" : "Create" }}
-        </button>
-        <button v-if="editingId" @click="cancelEdit" class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500">
-          Cancel
-        </button>
-      </div>
-    </div>
+    <input
+      v-model.number="form.price"
+      type="number"
+      placeholder="Price"
+      class="border rounded-lg p-2 w-full"
+    />
+
+    <select
+      v-model="form.pricing_type"
+      class="border rounded-lg p-2 w-full"
+    >
+      <option value="flat">Flat</option>
+      <option value="per_person">Per Person</option>
+    </select>
+
+    <textarea
+      v-model="form.description"
+      placeholder="Description"
+      class="border rounded-lg p-2 w-full sm:col-span-2 md:col-span-3"
+    ></textarea>
+
+    <label class="flex items-center space-x-2 col-span-1 sm:col-span-2 md:col-span-3">
+      <input type="checkbox" v-model="form.active" class="rounded"/>
+      <span>Active</span>
+    </label>
+  </div>
+
+  <div class="mt-4 flex flex-col sm:flex-row gap-2">
+    <button
+      @click="handleSubmit"
+      class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 w-full sm:w-auto"
+    >
+      {{ editingId ? "Update" : "Create" }}
+    </button>
+    <button
+      v-if="editingId"
+      @click="cancelEdit"
+      class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 w-full sm:w-auto"
+    >
+      Cancel
+    </button>
+  </div>
+</div>
 
     <!-- List of Add-Ons -->
     <div class="bg-white shadow-md rounded-lg overflow-x-auto">
@@ -64,9 +94,9 @@
                 {{ a.active ? "Yes" : "No" }}
               </span>
             </td>
-            <td class="px-4 py-3 space-x-2">
-              <button @click="editAddOn(a)" class="px-3 py-1 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Edit</button>
-              <button @click="deleteAddOn(a.id)" class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">Delete</button>
+            <td class="px-4 py-3 sm:space-x-2">
+              <button @click="editAddOn(a)" class="px-3 py-1 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">Edit</button>
+              <button @click="deleteAddOn(a.id)" class="px-3 py-1 mt-1 sm:mt-0 bg-red-600 text-white rounded-lg hover:bg-red-700">Delete</button>
             </td>
           </tr>
           <tr v-if="addOnsStore.addOns.length === 0">

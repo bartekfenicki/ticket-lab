@@ -1,6 +1,6 @@
 <template>
   <div class="p-4">
-    <h2 class="text-2xl font-semibold mb-4">Manage Variants</h2>
+    <h2 class="text-2xl text-green-700 font-semibold mb-4">Manage Variants</h2>
 
     <!-- Select Reservation Option Type -->
     <div class="mb-4">
@@ -38,7 +38,7 @@
       <textarea
           v-model="form.description"
            placeholder="Description"
-          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-green-200"
           rows="3"
         ></textarea>
 
@@ -47,7 +47,7 @@
           <span>Active</span>
         </label>
       <div class="mt-4 space-x-2">
-        <button @click="handleSubmit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+        <button @click="handleSubmit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
           {{ editingId ? "Update" : "Create" }}
         </button>
         <button v-if="editingId" @click="cancelEdit" class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500">
@@ -78,11 +78,11 @@
                 {{ v.active ? "Yes" : "No" }}
               </span>
             </td>
-            <td class="px-4 py-3 space-x-2">
-              <button @click="editVariant(v)" class="px-3 py-1 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+            <td class="px-4 py-3 sm:space-x-2">
+              <button @click="editVariant(v)" class="px-3 py-1 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">
                 Edit
               </button>
-              <button @click="deleteVariant(v.id)" class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
+              <button @click="deleteVariant(v.id)" class="px-3 py-1 mt-1 sm:mt-0 bg-red-600 text-white rounded-lg hover:bg-red-700">
                 Delete
               </button>
             </td>

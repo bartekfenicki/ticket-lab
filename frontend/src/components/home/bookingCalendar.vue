@@ -57,10 +57,6 @@
         v-if="reservations.reservations.length && hasReservation(day) && activeTab === 'Reservations'"
         class="mt-1 w-2 h-2 rounded-full bg-indigo-600"
       ></span>
-      <span
-        v-if="isClosedDay(day)"
-        class="absolute bottom-1 w-2 h-2 bg-red-600 rounded-full"
-      ></span>
       </button>
     </div>
 
@@ -80,6 +76,25 @@
           <p class="font-semibold text-yellow-700">{{ selectedEvent.title }}</p>
           <p class="text-yellow-600">{{ selectedEvent.description }}</p>
         </div>
+
+        <div
+            v-if="activeTab === 'Tickets'"
+            class="w-full mt-4 px-3 py-3 border border-gray-200 rounded-lg bg-blue-50 shadow-sm text-center"
+          >
+            <p class="text-gray-700 font-medium">
+              Stock for this day:
+            </p>
+
+            <p class="text-lg font-semibold text-yellow-700 mt-1">
+              Total: {{ selectedDayStock?.total_quantity ?? '—' }} |
+              Sold: {{ selectedDayStock?.sold_quantity ?? '—' }}
+            </p>
+
+            <p class="text-green-600 font-bold mt-1">
+              Tickets Left:
+              {{ remainingTickets }}
+            </p>
+      </div>
 <div v-if="activeTab === 'Reservations'" class="w-full">
        <div v-if="selectedReservations.length" class="mt-4 w-full">
   <!-- Slots Info -->
@@ -91,6 +106,8 @@
       {{ 8 - selectedReservations.length }} slots left
     </p>
   </div>
+
+
 
   <!-- Reservation Cards -->
   <div class="space-y-3">
@@ -132,6 +149,7 @@ import { useRouter } from 'vue-router'
 import { useSpecialEventsStore } from '@/stores/specialEventsStore'
 import { useReservationStore } from '@/stores/reservationStore'
 import { useClosedDaysStore } from '@/stores/closedDaysStore'
+import { useTicketStockStore } from '@/stores/ticketStockStore'
 
 const router = useRouter()
 const events = useSpecialEventsStore()
@@ -152,6 +170,7 @@ onMounted(async () => {
   await events.fetchEvents()
   await reservations.getAllReservations()
     await closedDays.fetchClosedDays()
+    await ticketStockStore.fetchStocks();
 
   console.log("Closed days:", closedDays.byDate)
   console.log("Reservations loaded:", reservations.reservations)
@@ -328,6 +347,25 @@ const isSelectedDateInFutureOrToday = computed(() => {
 
   return sel >= today;
 });
+
+const ticketStockStore = useTicketStockStore()
+
+const selectedDayStock = computed(() => {
+  if (!selectedDate.value) return null
+  if (activeTab.value !== "Tickets") return null
+
+  const key = selectedDate.value.toISOString().slice(0, 10)
+
+  return ticketStockStore.stocks.find(s => s.date.slice(0, 10) === key) || null
+})
+
+const remainingTickets = computed(() => {
+  if (!selectedDayStock.value) return 0
+  return (
+    selectedDayStock.value.total_quantity -
+    selectedDayStock.value.sold_quantity
+  )
+})
 
 // Navigate to booking page with selected date
 const goToBooking = () => {

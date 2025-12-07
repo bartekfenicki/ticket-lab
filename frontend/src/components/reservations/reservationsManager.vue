@@ -1,66 +1,84 @@
 <template>
   <div class="p-6">
-    <div class="flex justify-between w-full">
-      <h2 class="text-2xl font-semibold mb-4">Reservations </h2>
+    <div class="flex flex-col md:flex-row justify-between w-full mb-4 gap-4">
+  <!-- Title -->
+  <h2 class="text-2xl text-green-700 font-semibold">
+    Reservations
+  </h2>
 
-      <div class="block">
-          <button
-            @click="prevMonth"
-            class="px-2 py-1 mx-1 bg-indigo-200 rounded hover:bg-gray-300"
-          >
-            ←
+  <!-- Month/Year Selector & Navigation -->
+  <div class="flex flex-wrap md:flex-row items-center gap-2">
+    <button
+      @click="prevMonth"
+      class="px-3 py-2 bg-indigo-200 rounded hover:bg-gray-300 hidden md:block"
+    >
+      ←
+    </button>
+
+    <select
+      v-model.number="selectedMonth"
+      class="px-3 py-2 border rounded-lg w-full md:w-auto"
+    >
+      <option v-for="(m, index) in months" :key="index" :value="index + 1">
+        {{ m }}
+      </option>
+    </select>
+
+    <select
+      v-model.number="selectedYear"
+      class="px-3 py-2 border rounded-lg w-full md:w-auto"
+    >
+      <option v-for="y in yearOptions" :key="y" :value="y">{{ y }}</option>
+    </select>
+    <div class="flex gap-2 w-full md:w-fit justify-center md:block">
+      <button
+                @click="prevMonth"
+                class="px-3 py-2 bg-indigo-200 rounded hover:bg-gray-300 block md:hidden"
+              >
+                ←
           </button>
-
-          <select v-model.number="selectedMonth" class="px-3 mx-1 py-2 border rounded-lg">
-            <option v-for="(m, index) in months" :key="index" :value="index + 1">
-              {{ m }}
-            </option>
-          </select>
-
-          <select v-model.number="selectedYear" class="px-3 py-2 border rounded-lg">
-            <option v-for="y in yearOptions" :key="y" :value="y">{{ y }}</option>
-          </select>
-
           <button
             @click="nextMonth"
-            class="px-2 mx-1 py-1 bg-indigo-200 rounded hover:bg-gray-300"
+            class="px-3 py-2 bg-indigo-200 rounded hover:bg-gray-300"
           >
             →
-          </button>
-        </div>
+    </button>
     </div>
 
+  </div>
+</div>
 
-    <!-- TOP BAR -->
-    <div class="flex flex-wrap items-center gap-4 mb-6">
+<!-- Top Bar: Search, Sort, Payment Filter -->
+<div class="flex flex-col md:flex-row flex-wrap items-center gap-3 mb-6">
+  <!-- Search -->
+  <input
+    v-model="searchQuery"
+    type="text"
+    placeholder="Search by email or last name..."
+    class="px-3 py-2 border rounded-lg w-full md:w-80"
+  />
 
-      <!-- SEARCH -->
-      <input
-        v-model="searchQuery"
-        type="text"
-        placeholder="Search by email or last name..."
-        class="px-3 py-2 border rounded-lg w-80"
-      />
+  <!-- Sort Button -->
+  <button
+    @click="toggleSort"
+    class="px-4 py-2 bg-indigo-600 text-white rounded-lg w-full md:w-auto"
+  >
+    Sort by Date: {{ sortAsc ? 'Oldest → Newest' : 'Newest → Oldest' }}
+  </button>
 
-      <!-- SORT -->
-      <button
-        @click="toggleSort"
-        class="px-4 py-2 bg-indigo-600 text-white rounded-lg"
-      >
-        Sort by Date:
-        {{ sortAsc ? 'Oldest → Newest' : 'Newest → Oldest' }}
-      </button>
-
-       <!-- Payment Status Filter -->
-      <select v-model="paymentFilter" class="px-3 py-2 border rounded-lg">
-        <option value="all">All Payments</option>
-        <option value="pending">Pending</option>
-        <option value="paid">Paid</option>
-      </select>
-    </div>
+  <!-- Payment Filter -->
+  <select
+    v-model="paymentFilter"
+    class="px-3 py-2 border rounded-lg w-full md:w-auto"
+  >
+    <option value="all">All Payments</option>
+    <option value="pending">Pending</option>
+    <option value="paid">Paid</option>
+  </select>
+</div>
 
     <!-- STATUS TABS -->
-    <div class="flex gap-3 mb-6 border-b pb-2">
+    <div class="flex gap-3 mb-6 border-b pb-2 overflow-x-scroll">
       <button
         v-for="s in statuses"
         :key="s.key"
@@ -68,8 +86,8 @@
         :class="[
           'px-4 py-2 font-medium transition-colors',
           activeStatus === s.key
-            ? 'border-b-2 border-indigo-600 text-indigo-600'
-            : 'text-gray-600 hover:text-indigo-600'
+            ? 'border-b-2 border-green-600 text-green-600'
+            : 'text-gray-600 hover:text-green-600'
         ]"
       >
         {{ s.label }}
@@ -77,65 +95,63 @@
     </div>
 
     <!-- LOADING -->
-    <div v-if="loading" class="text-gray-500">Loading...</div>
+    <!-- Loading / Error -->
+<div v-if="loading" class="text-gray-500">Loading...</div>
+<div v-if="error" class="text-red-600">{{ error }}</div>
 
-    <!-- ERROR -->
-    <div v-if="error" class="text-red-600">{{ error }}</div>
+<!-- Table Wrapper -->
+<div v-if="filteredAndSorted.length" class="overflow-x-auto w-full border rounded-lg shadow-sm">
+  <table class="min-w-[900px] w-full border-collapse">
+    <thead>
+      <tr class="bg-gray-50 text-left">
+        <th class="px-4 py-3 font-medium text-gray-600">ID</th>
+        <th class="px-4 py-3 font-medium text-gray-600">Name</th>
+        <th class="px-4 py-3 font-medium text-gray-600">Email</th>
+        <th class="px-4 py-3 font-medium text-gray-600">Date</th>
+        <th class="px-4 py-3 font-medium text-gray-600">Payment</th>
+        <th class="px-4 py-3 font-medium text-gray-600">Status</th>
+        <th class="px-4 py-3 font-medium text-gray-600">Actions</th>
+      </tr>
+    </thead>
 
-    <!-- TABLE -->
-    <table v-if="filteredAndSorted.length" class="w-full border-collapse">
-      <thead>
-        <tr class="bg-gray-50 text-left">
-          <th class="px-4 py-3 text-left font-medium text-gray-600">ID</th>
-          <th class="px-4 py-3 text-left font-medium text-gray-600">Name</th>
-          <th class="px-4 py-3 text-left font-medium text-gray-600">Email</th>
-          <th class="px-4 py-3 text-left font-medium text-gray-600">Date</th>
-          <th class="px-4 py-3 text-left font-medium text-gray-600">Payment</th>
-          <th class="px-4 py-3 text-left font-medium text-gray-600">Status</th>
-          <th class="px-4 py-3 text-left font-medium text-gray-600">Actions</th>
+    <tbody>
+      <template v-for="r in filteredAndSorted" :key="r.id">
+        <!-- Main Row -->
+        <tr class="border-b cursor-pointer" @click="toggleExpanded(r.id)">
+          <td class="px-4 py-3">{{ r.id }}</td>
+          <td class="px-4 py-3">{{ r.first_name }} {{ r.last_name }}</td>
+          <td class="px-4 py-3">{{ r.email }}</td>
+          <td class="px-4 py-3">{{ formatDate(r.date) }} at {{ r.start_time }}</td>
+          <td class="px-4 py-3">{{ r.payment_status }}</td>
+          <td class="px-4 py-3">
+            <span
+              class="px-2 py-1 rounded text-white"
+              :class="statusColor(r.status)"
+            >
+              {{ r.status }}
+            </span>
+          </td>
+          <td class="px-4 py-3 flex gap-2">
+            <button
+              @click.stop="openEditModal(r)"
+              class="px-3 py-1 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+            >
+              Edit
+            </button>
+            <button
+              @click.stop="deleteRes(r.id)"
+              class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700"
+            >
+              Delete
+            </button>
+          </td>
         </tr>
-      </thead>
 
-      <tbody>
-        <template v-for="r in filteredAndSorted" :key="r.id">
-          <tr class="border-b cursor-pointer" @click="toggleExpanded(r.id)">
-            <td class="px-4 py-3">{{ r.id }}</td>
-            <td class="px-4 py-3">{{ r.first_name }} {{ r.last_name }}</td>
-            <td class="px-4 py-3">{{ r.email }}</td>
-            <td class="px-4 py-3">{{ formatDate(r.date) }} at {{ r.start_time }}</td>
-            <td class="px-4 py-3">{{ r.payment_status }}</td>
-
-            <td class="px-4 py-3">
-              <span
-                class="px-2 py-1 rounded text-white"
-                :class="statusColor(r.status)"
-              >
-                {{ r.status }}
-              </span>
-            </td>
-
-            <td class="px-4 py-3 flex gap-2">
-              <button
-                @click.stop="openEditModal(r)"
-                class="px-3 py-1 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-              >
-                Edit
-              </button>
-              <button
-                @click.stop="deleteRes(r.id)"
-                class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700"
-              >
-                Delete
-              </button>
-            </td>
-          </tr>
-
-          <!-- EXPANDED ROW -->
-          <tr v-if="expanded.includes(r.id)" class="bg-gray-50 border-b">
-            <td colspan="7" class="p-4">
-              <h3 class="text-xl font-semibold mb-3">Reservation Details</h3>
-
-              <div class="grid grid-cols-2 gap-4 text-gray-700">
+        <!-- Expanded Row -->
+        <tr v-if="expanded.includes(r.id)" class="bg-gray-50 border-b">
+          <td colspan="7" class="p-4">
+            <div class="overflow-x-auto w-full">
+              <div class="min-w-[600px] grid grid-cols-2 gap-4 text-gray-700">
                 <p><strong>Type:</strong> {{ r.option_type_id }}</p>
 
                 <p v-if="r.selected_variant">
@@ -150,69 +166,58 @@
 
                 <p><strong>Total price:</strong> {{ r.total_price }} PLN</p>
                 <p><strong>People Count:</strong> {{ r.num_people }}</p>
-
                 <p><strong>Phone:</strong> {{ r.phone }}</p>
                 <p><strong>Notes:</strong> {{ r.note || 'None' }}</p>
               </div>
 
-              <!-- SPECIAL ACTIONS FOR pending_confirmation -->
-              <div
-                v-if="r.status === 'pending_confirmation'"
-                class="mt-4 flex gap-4"
-              >
+              <!-- Special Action Buttons -->
+              <div class="mt-4 flex flex-wrap gap-4">
                 <button
+                  v-if="r.status === 'pending_confirmation'"
                   @click="changeStatus(r.id, 'confirmed')"
                   class="px-4 py-2 bg-green-600 text-white rounded-lg"
                 >
                   Confirm Reservation
                 </button>
                 <button
+                  v-if="r.status === 'pending_confirmation'"
                   @click="changeStatus(r.id, 'declined')"
                   class="px-4 py-2 bg-red-600 text-white rounded-lg"
                 >
                   Decline Reservation
                 </button>
-              </div>
-              <div
-                v-if="r.status === 'confirmed'"
-                class="mt-4 flex gap-4"
-              >
                 <button
+                  v-if="r.status === 'confirmed'"
                   @click="changeStatus(r.id, 'cancelled')"
                   class="px-4 py-2 bg-red-600 text-white rounded-lg"
                 >
                   Cancel Reservation
                 </button>
-              </div>
-               <div
-                v-if="r.status === 'declined' || r.status === 'cancelled'"
-                class="mt-4 flex gap-4"
-              >
                 <button
+                  v-if="r.status === 'declined' || r.status === 'cancelled'"
                   @click="changeStatus(r.id, 'confirmed')"
                   class="px-4 py-2 bg-green-600 text-white rounded-lg"
                 >
                   Reactivate Reservation
                 </button>
-              </div>
-              <div
-                v-if="r.status === 'confirmed'"
-                class="mt-4 flex gap-4"
-              >
                 <button
-                    @click="togglePayStatus(r)"
-                    class="px-4 py-2 bg-green-600 text-white rounded-lg"
-                  >
-                     Mark Payment Status as {{ r.payment_status === 'pending' ? 'Paid' : 'Pending' }}
-                  </button>
+                  v-if="r.status === 'confirmed'"
+                  @click="togglePayStatus(r)"
+                  class="px-4 py-2 bg-green-600 text-white rounded-lg"
+                >
+                  Mark Payment Status as {{ r.payment_status === 'pending' ? 'Paid' : 'Pending' }}
+                </button>
               </div>
-            </td>
-          </tr>
-        </template>
-      </tbody>
-    </table>
+            </div>
+          </td>
+        </tr>
+      </template>
+    </tbody>
+  </table>
+</div>
 
-    <div v-else class="text-gray-600 mt-4">No reservations found.</div>
+<div v-else class="text-gray-600 mt-4">No reservations found.</div>
+
 
     <!-- EDIT MODAL -->
     <div
