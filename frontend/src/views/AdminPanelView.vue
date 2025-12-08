@@ -1,10 +1,8 @@
 <template>
   <div class="min-h-screen bg-gray-100 p-6">
     <div class="max-w-7xl mx-auto">
-      <!-- Dashboard Header -->
       <h1 class="text-3xl text-center sm:text-start font-bold mb-6">Admin Dashboard</h1>
 
-      <!-- Tabs -->
       <div class="flex space-x-4 border-b mb-6 overflow-x-scroll">
         <button
           v-for="tab in tabs"
@@ -21,7 +19,6 @@
         </button>
       </div>
 
-      <!-- Tab Content -->
       <div class="bg-white shadow rounded-lg p-0 sm:p-6">
         <component :is="currentTabComponent" @switch-tab="currentTab = $event" />
       </div>
@@ -38,7 +35,7 @@ import StatisticsTab from "@/components/admin/displayStatistics.vue"
 import MainTab from "@/components/admin/mainPanel.vue"
 import DaysManagementTab from "@/components/admin/daysManagement.vue"
 import EmailsLog from "@/components/admin/emailsLog.vue"
-// Tabs definition
+
 const tabs = [
   {key: "main", label: "Main", component: MainTab },
   { key: "users", label: "Users", component: UsersTab },
@@ -52,7 +49,6 @@ const tabs = [
 
 const currentTab = ref("main")
 
-// Dynamically resolve component
 const currentTabComponent = computed(() => {
   return tabs.find((t) => t.key === currentTab.value)?.component || UsersTab
 })

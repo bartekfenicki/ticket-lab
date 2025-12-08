@@ -2,7 +2,6 @@
   <section class="py-12 px-4 md:px-8  min-h-screen">
     <h1 class="text-3xl font-bold text-center mb-8">Pricing & Tickets</h1>
 
-    <!-- Tabs -->
     <div class="flex justify-center mb-8 space-x-4">
       <button
         :class="['px-4 py-2 rounded-lg font-semibold', activeTab === 'tickets' ? 'bg-green-600 text-white' : 'bg-white border']"
@@ -18,7 +17,6 @@
       </button>
     </div>
 
-    <!-- Tickets Table -->
     <div v-if="activeTab === 'tickets'">
       <table class="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
         <thead class="bg-green-100 text-left">
@@ -40,7 +38,6 @@
       </table>
     </div>
 
-    <!-- Reservations Table -->
     <div v-if="activeTab === 'reservations'">
       <table class="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden mt-4">
         <thead class="bg-green-100 text-left">
@@ -97,7 +94,6 @@ onMounted(async () => {
   await addOnsStore.fetchAddOns()
 })
 
-// Helpers
 const variantsByType = (typeId: number) =>
   variantsStore.variants.filter(v => v.reservation_option_type_id === typeId)
 
@@ -106,7 +102,6 @@ const addOnsByType = (typeId: number) =>
 </script>
 
 <style scoped>
-/* Optional: smooth hover for table rows */
 tbody tr:hover {
   transition: background-color 0.2s;
 }

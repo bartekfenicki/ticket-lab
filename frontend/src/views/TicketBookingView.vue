@@ -2,11 +2,11 @@
   <div class="min-h-screen   py-12 px-4">
     <div class="max-w-5xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
 
-      <!-- Header -->
+
       <div class="bg-green-600 text-white p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 class="text-3xl font-bold mb-1 flex items-center gap-2">
-            🎟 Ticket Booking
+             Ticket Booking
           </h1>
           <p class="text-indigo-100 text-lg">
             Selected Date:
@@ -14,7 +14,7 @@
           </p>
         </div>
 
-        <!-- Return Button -->
+
         <button
           @click="goHome"
           class="flex items-center gap-2 bg-white text-green-700 px-5 py-2 rounded-lg font-medium hover:bg-indigo-100 transition-all border border-white/30 shadow-sm"
@@ -23,10 +23,8 @@
         </button>
       </div>
 
-      <!-- Content -->
       <div class="p-8 space-y-10">
 
-        <!-- Ticket selection -->
         <section class="border-b pb-10">
           <h2 class="text-2xl font-semibold text-green-700 mb-4 flex items-center gap-2">
             <span class="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-sm font-medium">Step 1</span>
@@ -37,7 +35,6 @@
             v-model="tickets" />
         </section>
 
-        <!-- Personal Info -->
         <section class="pb-10">
           <h2 class="text-2xl font-semibold text-green-700 mb-4 flex items-center gap-2">
             <span class="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-sm font-medium">Step 2</span>
@@ -46,7 +43,6 @@
           <TicketPersonalInfo v-model="personalInfo" />
         </section>
 
-        <!-- Summary / action -->
         <section class="pt-8 border-t">
           <div class="flex justify-between items-center flex-wrap gap-4">
             <div>
@@ -95,11 +91,11 @@ const formattedDate = computed(() => {
   })
 })
 
-// State
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const tickets = ref<any[]>([])
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const personalInfo = ref<any>({})
 
-// Computed totals
 const totalTickets = computed(() =>
   tickets.value.reduce((acc, t) => acc + (t.quantity || 0), 0)
 )
@@ -107,7 +103,6 @@ const totalPrice = computed(() =>
   tickets.value.reduce((acc, t) => acc + (t.quantity || 0) * (t.price || 0), 0)
 )
 
-// Single proceed button
 const proceedToPayment = () => {
   if (totalTickets.value === 0) {
     alert('Please select at least one ticket.')
@@ -126,7 +121,6 @@ const proceedToPayment = () => {
     ...personalInfo.value
   }
 
-  // Navigate to payment page
   router.push({
     name: 'payment',
     params: { type: 'tickets' },

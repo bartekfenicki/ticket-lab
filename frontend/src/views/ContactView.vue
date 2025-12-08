@@ -4,7 +4,6 @@
 
     <div class="flex flex-col lg:flex-row gap-8">
 
-      <!-- CONTACT INFO -->
       <div class="lg:w-1/3 bg-green-100 p-6 rounded-lg shadow space-y-4">
         <h2 class="text-xl font-semibold mb-2">Get in touch</h2>
         <p>We’d love to hear from you! Reach out via email, phone, or drop by our office.</p>
@@ -16,10 +15,8 @@
         </div>
       </div>
 
-      <!-- CONTACT FORM + MAP SPACE -->
       <div class="lg:w-2/3 flex flex-col gap-6">
 
-        <!-- FORM -->
         <form @submit.prevent="submitForm" class="bg-white p-6 rounded-lg shadow space-y-4">
           <h2 class="text-xl font-semibold mb-2">Send us a message</h2>
 
@@ -57,7 +54,6 @@
           <p v-if="successMessage" class="text-green-600 mt-2">{{ successMessage }}</p>
         </form>
 
-        <!-- MAP PLACEHOLDER -->
         <div class="w-full h-64 md:h-80 bg-gray-200 rounded-lg flex items-center justify-center text-gray-600 text-center">
           Map will go here
         </div>
@@ -65,11 +61,9 @@
     </div>
   </section>
 </template>
-
 <script setup lang="ts">
 import { ref } from 'vue';
 
-// Contact form state
 const form = ref({
   name: '',
   email: '',
@@ -81,12 +75,8 @@ const successMessage = ref('');
 const submitForm = () => {
   console.log('Form submitted:', form.value);
   successMessage.value = 'Your message has been sent!';
-  // Reset form
   form.value = { name: '', email: '', message: '' };
 };
 </script>
 
-<style scoped>
-/* Optional: you can add responsive tweaks if needed */
-</style>
 
