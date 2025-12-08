@@ -1,3 +1,4 @@
+import { apiFetch } from "@/utils/api";
 import { defineStore } from "pinia";
 
 export interface EmailLog {
@@ -27,7 +28,7 @@ export const useEmailLogsStore = defineStore("emailLogs", {
       this.loading = true;
       this.error = null;
       try {
-        const res = await fetch("/api/email-logs");
+        const res = await apiFetch("/api/email-logs");
         if (!res.ok) throw new Error("Failed to fetch email logs");
         this.emailLogs = await res.json();
       } catch (err: any) {
@@ -42,7 +43,7 @@ export const useEmailLogsStore = defineStore("emailLogs", {
       this.loading = true;
       this.error = null;
       try {
-        const res = await fetch(`/api/email-logs/${id}`);
+        const res = await apiFetch(`/api/email-logs/${id}`);
         if (!res.ok) throw new Error("Failed to fetch email log");
         const log = await res.json();
         // Optional: add/update in state
@@ -63,7 +64,7 @@ export const useEmailLogsStore = defineStore("emailLogs", {
       this.loading = true;
       this.error = null;
       try {
-        const res = await fetch("/api/email-logs", {
+        const res = await apiFetch("/api/email-logs", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -85,7 +86,7 @@ export const useEmailLogsStore = defineStore("emailLogs", {
       this.loading = true;
       this.error = null;
       try {
-        const res = await fetch(`/api/email-logs/${id}`, {
+        const res = await apiFetch(`/api/email-logs/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -108,7 +109,7 @@ export const useEmailLogsStore = defineStore("emailLogs", {
       this.loading = true;
       this.error = null;
       try {
-        const res = await fetch(`/api/email-logs/${id}`, { method: "DELETE" });
+        const res = await apiFetch(`/api/email-logs/${id}`, { method: "DELETE" });
         if (!res.ok) throw new Error("Failed to delete email log");
         this.emailLogs = this.emailLogs.filter((l) => l.id !== id);
         return true;

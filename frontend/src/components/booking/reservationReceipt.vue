@@ -64,6 +64,7 @@ import { computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useReservationStore } from "@/stores/reservationStore";
 import { useEmailLogsStore } from "@/stores/emailsLogStore";
+import { apiFetch } from "@/utils/api";
 
 const route = useRoute();
 const reservationStore = useReservationStore();
@@ -98,7 +99,7 @@ const formatPrice = (price: number, type: string) =>
 const sendReservationEmail = async (reservationData: any) => {
   try {
     // Send the email via backend endpoint
-    const res = await fetch(`/api/reservations/${reservationData.id}/by-email`, {
+    const res = await apiFetch(`/api/reservations/${reservationData.id}/by-email`, {
       method: "GET",
     });
 

@@ -1,4 +1,5 @@
 // src/stores/specialEventsStore.ts
+import { apiFetch } from '@/utils/api'
 import { defineStore } from 'pinia'
 
 export interface SpecialEvent {
@@ -29,7 +30,7 @@ export const useSpecialEventsStore = defineStore('specialEvents', {
       this.loading = true
       this.error = null
       try {
-        const res = await fetch('/api/special-events')
+        const res = await apiFetch('/api/special-events')
     if (!res.ok) throw new Error('Failed to fetch events')
 
     const data = await res.json()
@@ -49,7 +50,7 @@ export const useSpecialEventsStore = defineStore('specialEvents', {
       this.loading = true
       this.error = null
       try {
-        const res = await fetch('/api/special-events', {
+        const res = await apiFetch('/api/special-events', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(eventData),
@@ -70,7 +71,7 @@ export const useSpecialEventsStore = defineStore('specialEvents', {
       this.loading = true
       this.error = null
       try {
-        const res = await fetch(`/api/special-events/${id}`, {
+        const res = await apiFetch(`/api/special-events/${id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedData),
@@ -92,7 +93,7 @@ export const useSpecialEventsStore = defineStore('specialEvents', {
       this.loading = true
       this.error = null
       try {
-        const res = await fetch(`/api/special-events/${id}`, { method: 'DELETE' })
+        const res = await apiFetch(`/api/special-events/${id}`, { method: 'DELETE' })
         if (!res.ok) throw new Error('Failed to delete event')
         this.events = this.events.filter(e => e.id !== id)
         return true

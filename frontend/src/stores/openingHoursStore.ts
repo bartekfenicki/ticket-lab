@@ -1,3 +1,4 @@
+import { apiFetch } from "@/utils/api";
 import { defineStore } from "pinia";
 
 export interface OpeningHour {
@@ -52,7 +53,7 @@ export const useOpeningHoursStore = defineStore("openingHours", {
     // CREATE
     async createOpeningHour(payload: Omit<OpeningHour, "id" | "created_at" | "updated_at">) {
       try {
-        const res = await fetch("/api/opening-hours", {
+        const res = await apiFetch("/api/opening-hours", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -68,7 +69,7 @@ export const useOpeningHoursStore = defineStore("openingHours", {
     // UPDATE
     async updateOpeningHour(id: number, payload: Partial<OpeningHour>) {
       try {
-        const res = await fetch(`/api/opening-hours/${id}`, {
+        const res = await apiFetch(`/api/opening-hours/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -85,7 +86,7 @@ export const useOpeningHoursStore = defineStore("openingHours", {
     // DELETE
     async deleteOpeningHour(id: number) {
       try {
-        const res = await fetch(`/api/opening-hours/${id}`, {
+        const res = await apiFetch(`/api/opening-hours/${id}`, {
           method: "DELETE",
         });
         if (!res.ok) throw new Error("Failed to delete opening hour");

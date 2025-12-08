@@ -1,4 +1,5 @@
 // src/stores/ticketStockStore.ts
+import { apiFetch } from '@/utils/api'
 import { defineStore } from 'pinia'
 
 export interface TicketStock {
@@ -31,7 +32,7 @@ export const useTicketStockStore = defineStore('ticketStock', {
       this.loading = true
       this.error = null
       try {
-        const res = await fetch("/api/ticket-stock");
+        const res = await apiFetch("/api/ticket-stock");
         if (!res.ok) throw new Error('Failed to fetch ticket stocks')
         const data = await res.json()
         this.stocks = data
@@ -46,7 +47,7 @@ export const useTicketStockStore = defineStore('ticketStock', {
       this.loading = true
       this.error = null
       try {
-        const res = await fetch(`/api/ticket-stock/by-date?date=${date}`)
+        const res = await apiFetch(`/api/ticket-stock/by-date?date=${date}`)
         if (!res.ok) throw new Error("Failed to load stock")
 
         this.stock = await res.json()
@@ -61,7 +62,7 @@ export const useTicketStockStore = defineStore('ticketStock', {
       this.loading = true
       this.error = null
       try {
-        const res = await fetch('/api/ticket-stock', {
+        const res = await apiFetch('/api/ticket-stock', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(stock),
@@ -83,7 +84,7 @@ export const useTicketStockStore = defineStore('ticketStock', {
         console.log("➡️ Sending payload:", stock);
       this.loading = true
       try {
-        const res = await fetch('/api/ticket-stock/upsert', {
+        const res = await apiFetch('/api/ticket-stock/upsert', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(stock),
@@ -107,7 +108,7 @@ export const useTicketStockStore = defineStore('ticketStock', {
       this.loading = true
       this.error = null
       try {
-        const res = await fetch(`/api/ticket-stock/${id}`, {
+        const res = await apiFetch(`/api/ticket-stock/${id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(stock),
@@ -128,7 +129,7 @@ export const useTicketStockStore = defineStore('ticketStock', {
     async updateSoldQuantityForDate(date: string, increment: number) {
       console.log("⬆️ Updating sold quantity for date:", date, "by", increment);
 
-      const res = await fetch("/api/ticket-stock/update-sold", {
+      const res = await apiFetch("/api/ticket-stock/update-sold", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ date, increment }),
@@ -151,7 +152,7 @@ export const useTicketStockStore = defineStore('ticketStock', {
       this.loading = true
       this.error = null
       try {
-        const res = await fetch(`/api/ticket-stock/${id}`, { method: 'DELETE' })
+        const res = await apiFetch(`/api/ticket-stock/${id}`, { method: 'DELETE' })
         if (!res.ok) throw new Error('Failed to delete stock')
         this.stocks = this.stocks.filter((s) => s.id !== id)
         return true

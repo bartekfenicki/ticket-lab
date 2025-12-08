@@ -1,3 +1,4 @@
+import { apiFetch } from "@/utils/api";
 import { defineStore } from "pinia";
 
 export interface TicketType {
@@ -27,7 +28,7 @@ export const useTicketTypeStore = defineStore("ticketType", {
       this.loading = true;
       this.error = null;
       try {
-        const res = await fetch("/api/ticket-types");
+        const res = await apiFetch("/api/ticket-types");
         if (!res.ok) throw new Error("Failed to fetch ticket types");
         this.ticketTypes = await res.json();
       } catch (err: any) {
@@ -41,7 +42,7 @@ export const useTicketTypeStore = defineStore("ticketType", {
       this.loading = true;
       this.error = null;
       try {
-        const res = await fetch("/api/ticket-types", {
+        const res = await apiFetch("/api/ticket-types", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(ticket),
@@ -62,7 +63,7 @@ export const useTicketTypeStore = defineStore("ticketType", {
       this.loading = true;
       this.error = null;
       try {
-        const res = await fetch(`/api/ticket-types/${id}`, {
+        const res = await apiFetch(`/api/ticket-types/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedData),
@@ -84,7 +85,7 @@ export const useTicketTypeStore = defineStore("ticketType", {
       this.loading = true;
       this.error = null;
       try {
-        const res = await fetch(`/api/ticket-types/${id}`, {
+        const res = await apiFetch(`/api/ticket-types/${id}`, {
           method: "DELETE",
         });
         if (!res.ok) throw new Error("Failed to delete ticket type");

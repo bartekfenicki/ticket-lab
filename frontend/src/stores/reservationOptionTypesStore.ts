@@ -1,3 +1,4 @@
+import { apiFetch } from "@/utils/api";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
@@ -22,7 +23,7 @@ export const useReservationOptionTypesStore = defineStore(
       error.value = null;
 
       try {
-        const response = await fetch("/api/reservation-option-types");
+        const response = await apiFetch("/api/reservation-option-types");
         if (!response.ok) throw new Error("Failed to fetch reservation option types");
         optionTypes.value = await response.json();
       } catch (err: any) {
@@ -37,7 +38,7 @@ export const useReservationOptionTypesStore = defineStore(
       loading.value = true;
       error.value = null;
       try {
-        const response = await fetch("/api/reservation-option-types", {
+        const response = await apiFetch("/api/reservation-option-types", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
@@ -59,7 +60,7 @@ export const useReservationOptionTypesStore = defineStore(
       loading.value = true;
       error.value = null;
       try {
-        const response = await fetch(`/api/reservation-option-types/${id}`, {
+        const response = await apiFetch(`/api/reservation-option-types/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
@@ -84,7 +85,7 @@ export const useReservationOptionTypesStore = defineStore(
       loading.value = true;
       error.value = null;
       try {
-        const response = await fetch(`/api/reservation-option-types/${id}`, {
+        const response = await apiFetch(`/api/reservation-option-types/${id}`, {
           method: "DELETE",
         });
         if (!response.ok) throw new Error("Failed to delete option type");

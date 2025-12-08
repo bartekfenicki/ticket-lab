@@ -1,3 +1,4 @@
+import { apiFetch } from "@/utils/api";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
@@ -34,7 +35,7 @@ export const useTicketStore = defineStore("ticketStore", () => {
     loading.value = true;
     error.value = null;
     try {
-      const res = await fetch(`/api/tickets/by-email?email=${encodeURIComponent(email)}`);
+      const res = await apiFetch(`/api/tickets/by-email?email=${encodeURIComponent(email)}`);
       if (!res.ok) throw new Error("Failed to fetch tickets");
       tickets.value = await res.json();
     } catch (err: any) {
@@ -49,7 +50,7 @@ export const useTicketStore = defineStore("ticketStore", () => {
     loading.value = true;
     error.value = null;
     try {
-      const res = await fetch(`/api/tickets/${id}`);
+      const res = await apiFetch(`/api/tickets/${id}`);
       if (!res.ok) throw new Error("Failed to fetch ticket");
       const ticket: Ticket = await res.json();
 
@@ -75,7 +76,7 @@ export const useTicketStore = defineStore("ticketStore", () => {
     loading.value = true;
     error.value = null;
     try {
-      const res = await fetch("/api/tickets");
+      const res = await apiFetch("/api/tickets");
       if (!res.ok) throw new Error("Failed to fetch tickets");
       tickets.value = await res.json();
     } catch (err: any) {
@@ -90,7 +91,7 @@ export const useTicketStore = defineStore("ticketStore", () => {
     loading.value = true;
     error.value = null;
     try {
-      const res = await fetch("/api/tickets", {
+      const res = await apiFetch("/api/tickets", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(ticketData),
@@ -112,7 +113,7 @@ export const useTicketStore = defineStore("ticketStore", () => {
   error.value = null;
 
   try {
-    const res = await fetch(`/api/tickets/${id}`, {
+    const res = await apiFetch(`/api/tickets/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),

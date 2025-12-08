@@ -1,3 +1,4 @@
+import { apiFetch } from "@/utils/api";
 import { defineStore } from "pinia";
 
 export interface ClosedDay {
@@ -42,7 +43,7 @@ export const useClosedDaysStore = defineStore("closedDays", {
       this.error = null;
 
       try {
-        const res = await fetch("/api/closed-days");
+        const res = await apiFetch("/api/closed-days");
         if (!res.ok) throw new Error("Failed to fetch closed days");
 
         this.closedDays = await res.json();
@@ -59,7 +60,7 @@ export const useClosedDaysStore = defineStore("closedDays", {
       this.error = null;
 
       try {
-        const res = await fetch("/api/closed-days", {
+        const res = await apiFetch("/api/closed-days", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -85,7 +86,7 @@ export const useClosedDaysStore = defineStore("closedDays", {
       this.error = null;
 
       try {
-        const res = await fetch(`/api/closed-days/${id}`, {
+        const res = await apiFetch(`/api/closed-days/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -113,7 +114,7 @@ export const useClosedDaysStore = defineStore("closedDays", {
       this.error = null;
 
       try {
-        const res = await fetch(`/api/closed-days/${id}`, {
+        const res = await apiFetch(`/api/closed-days/${id}`, {
           method: "DELETE",
         });
 

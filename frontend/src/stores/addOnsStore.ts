@@ -1,3 +1,4 @@
+import { apiFetch } from "@/utils/api";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
@@ -25,7 +26,7 @@ export const useReservationOptionAddOnsStore = defineStore(
       loading.value = true;
       error.value = null;
       try {
-        const res = await fetch("/api/addons");
+        const res = await apiFetch("/api/addons");
         if (!res.ok) throw new Error("Failed to fetch add-ons");
         addOns.value = await res.json();
       } catch (err: any) {
@@ -40,7 +41,7 @@ export const useReservationOptionAddOnsStore = defineStore(
       loading.value = true;
       error.value = null;
       try {
-        const res = await fetch(`/api/addons/option-type/${optionTypeId}`);
+        const res = await apiFetch(`/api/addons/option-type/${optionTypeId}`);
         if (!res.ok) throw new Error("Failed to fetch add-ons for option type");
         addOns.value = await res.json();
       } catch (err: any) {
@@ -54,7 +55,7 @@ export const useReservationOptionAddOnsStore = defineStore(
     const createAddOn = async (data: Omit<ReservationOptionAddOn, "id" | "created_at" | "updated_at">) => {
       loading.value = true;
       try {
-        const res = await fetch("/api/addons", {
+        const res = await apiFetch("/api/addons", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
@@ -72,7 +73,7 @@ export const useReservationOptionAddOnsStore = defineStore(
     const updateAddOn = async (id: number, data: Partial<ReservationOptionAddOn>) => {
       loading.value = true;
       try {
-        const res = await fetch(`/api/addons/${id}`, {
+        const res = await apiFetch(`/api/addons/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
@@ -91,7 +92,7 @@ export const useReservationOptionAddOnsStore = defineStore(
     const deleteAddOn = async (id: number) => {
       loading.value = true;
       try {
-        const res = await fetch(`/api/reservation-option-addons/${id}`, { method: "DELETE" });
+        const res = await apiFetch(`/api/reservation-option-addons/${id}`, { method: "DELETE" });
         if (!res.ok) throw new Error("Failed to delete add-on");
         addOns.value = addOns.value.filter(a => a.id !== id);
       } finally {

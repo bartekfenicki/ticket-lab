@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { ReservationOptionType } from "./reservationOptionTypesStore";
+import { apiFetch } from "@/utils/api";
 
 export interface ReservationVariant {
   id: number;
@@ -61,7 +62,7 @@ export const useReservationStore = defineStore("reservationStore", () => {
     error.value = null;
 
     try {
-      const res = await fetch(`/api/reservations/${id}`);
+      const res = await apiFetch(`/api/reservations/${id}`);
       if (!res.ok) throw new Error("Failed to fetch reservation");
 
       currentReservation.value = await res.json();
@@ -77,7 +78,7 @@ export const useReservationStore = defineStore("reservationStore", () => {
     error.value = null;
 
     try {
-      const response = await fetch("/api/reservations", {
+      const response = await apiFetch("/api/reservations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -99,7 +100,7 @@ export const useReservationStore = defineStore("reservationStore", () => {
     error.value = null;
 
     try {
-      const res = await fetch("/api/reservations");
+      const res = await apiFetch("/api/reservations");
       if (!res.ok) throw new Error("Failed to fetch reservations");
       reservations.value = await res.json();
     } catch (err: any) {
@@ -115,7 +116,7 @@ export const useReservationStore = defineStore("reservationStore", () => {
     error.value = null;
 
     try {
-      const res = await fetch(`/api/reservations/${id}`, {
+      const res = await apiFetch(`/api/reservations/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData),
@@ -144,7 +145,7 @@ export const useReservationStore = defineStore("reservationStore", () => {
     error.value = null;
 
     try {
-      const res = await fetch(`/api/reservations/${id}`, { method: "DELETE" });
+      const res = await apiFetch(`/api/reservations/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete reservation");
 
       reservations.value = reservations.value.filter(r => r.id !== id);

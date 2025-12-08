@@ -1,3 +1,4 @@
+import { apiFetch } from "@/utils/api";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
@@ -24,7 +25,7 @@ export const useOptionTypeVariantsStore = defineStore(
       loading.value = true;
       error.value = null;
       try {
-        const res = await fetch("/api/option-type-variants");
+        const res = await apiFetch("/api/option-type-variants");
         if (!res.ok) throw new Error("Failed to fetch variants");
         variants.value = await res.json();
       } catch (err: any) {
@@ -39,7 +40,7 @@ export const useOptionTypeVariantsStore = defineStore(
       loading.value = true;
       error.value = null;
       try {
-        const res = await fetch(`/api/option-type-variants/option-type/${optionTypeId}`);
+        const res = await apiFetch(`/api/option-type-variants/option-type/${optionTypeId}`);
         if (!res.ok) throw new Error("Failed to fetch variants for option type");
         variants.value = await res.json();
       } catch (err: any) {
@@ -53,7 +54,7 @@ export const useOptionTypeVariantsStore = defineStore(
     const createVariant = async (data: Omit<OptionTypeVariant, "id" | "created_at" | "updated_at">) => {
       loading.value = true;
       try {
-        const res = await fetch("/api/option-type-variants", {
+        const res = await apiFetch("/api/option-type-variants", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
@@ -71,7 +72,7 @@ export const useOptionTypeVariantsStore = defineStore(
     const updateVariant = async (id: number, data: Partial<OptionTypeVariant>) => {
       loading.value = true;
       try {
-        const res = await fetch(`/api/option-type-variants/${id}`, {
+        const res = await apiFetch(`/api/option-type-variants/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
@@ -90,7 +91,7 @@ export const useOptionTypeVariantsStore = defineStore(
     const deleteVariant = async (id: number) => {
       loading.value = true;
       try {
-        const res = await fetch(`/api/option-type-variants/${id}`, { method: "DELETE" });
+        const res = await apiFetch(`/api/option-type-variants/${id}`, { method: "DELETE" });
         if (!res.ok) throw new Error("Failed to delete variant");
         variants.value = variants.value.filter(v => v.id !== id);
       } finally {

@@ -52,6 +52,7 @@ import { useTicketStore } from '@/stores/ticketStore'
 import jsPDF from "jspdf"; // jsPDF is typed automatically
 import QRCode from "qrcode"; // QRCode is typed
 import { useEmailLogsStore } from "@/stores/emailsLogStore";
+import { apiFetch } from '@/utils/api';
 
 const route = useRoute()
 const ticketStore = useTicketStore()
@@ -264,7 +265,7 @@ const sendTicketByEmail = async () => {
   if (!ticket.value) return;
 
   try {
-    const res = await fetch(`/api/tickets/${ticket.value.id}/email`, {
+    const res = await apiFetch(`/api/tickets/${ticket.value.id}/email`, {
       method: "POST",
       headers: { "Content-Type": "application/json" }
     });

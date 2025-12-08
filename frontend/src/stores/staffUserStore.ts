@@ -1,3 +1,4 @@
+import { apiFetch } from "@/utils/api";
 import { defineStore } from "pinia";
 
 interface User {
@@ -31,7 +32,7 @@ export const useUserStore = defineStore("user", {
       this.error = null;
 
       try {
-        const res = await fetch("/api/users", {
+        const res = await apiFetch("/api/users", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -65,7 +66,7 @@ export const useUserStore = defineStore("user", {
       this.error = null;
 
       try {
-        const res = await fetch("/api/users/login", {
+        const res = await apiFetch("/api/users/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
@@ -111,7 +112,7 @@ export const useUserStore = defineStore("user", {
       this.error = null;
       try {
         const API_URL = "/api/users";
-        const res = await fetch(API_URL);
+        const res = await apiFetch(API_URL);
 
         if (!res.ok) throw new Error("Failed to fetch users");
         this.users_list = await res.json();
