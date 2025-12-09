@@ -46,8 +46,8 @@ app.use((req, res, next) => {
 app.get("/api/health", (req, res) => res.send("API is healthy ✅"));
 
 const PORT = process.env.PORT || 5002;
-
+const SwaggerRoute = process.env.SWAGGER_ROUTE
 app.listen(PORT, () => {
   console.log(`✅ Server running on http://localhost:${PORT}/api/health`);
-  console.log(`📄 Swagger docs available at http://localhost:${PORT}/api/docs`);
+  console.log(`📄 Swagger docs available at ${SwaggerRoute}`);
 });
