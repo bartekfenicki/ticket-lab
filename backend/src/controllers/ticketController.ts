@@ -156,18 +156,15 @@ export const sendTicketByEmail = async (req: Request, res: Response) => {
     const pdfBuffer = await generateTicketPdfBuffer(ticket);
 
     // Email transporter
-  const transporter = nodemailer.createTransport({
-       host: process.env.MAIL_HOST,
-       port: Number(process.env.MAIL_PORT),
-       secure: Number(process.env.MAIL_PORT) === 587,
-       auth: {
-         user: process.env.MAIL_USER,
-         pass: process.env.MAIL_PASS,
-       },
-       tls: {
-         rejectUnauthorized: false,
-       },
-     });
+const transporter = nodemailer.createTransport({
+  host: process.env.MAIL_HOST,
+  port: Number(process.env.MAIL_PORT),
+  secure: false,               // ALWAYS false for port 587
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
+  },
+});
 
     await transporter.sendMail({
       from: '"Your Event" <no-reply@yourdomain.com>',
