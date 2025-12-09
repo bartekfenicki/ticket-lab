@@ -94,6 +94,6 @@ router.put("/:id", updateExistingReservation);
  */
 router.delete("/:id", deleteExistingReservation);
 
-router.post("/:id/by-email", sendReservationByEmail);
+router.get("/:id/by-email", sendReservationByEmail);
 
 export default router;
