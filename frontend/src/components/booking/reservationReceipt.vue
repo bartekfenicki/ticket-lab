@@ -100,7 +100,7 @@ const sendReservationEmail = async (reservationData: any) => {
   try {
     // Send the email via backend endpoint
     const res = await apiFetch(`/api/reservations/${reservationData.id}/by-email`, {
-      method: "GET",
+      method: "POST",
     });
 
     if (!res.ok) throw new Error("Email failed to send");

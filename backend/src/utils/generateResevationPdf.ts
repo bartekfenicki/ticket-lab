@@ -2,7 +2,6 @@ import PDFDocument from "pdfkit";
 import QRCode from "qrcode";
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 import type { Reservation } from "../models/reservationModel.js";
 
 export const generateReservationPdfBuffer = async (reservation: Reservation): Promise<Buffer> => {
@@ -17,9 +16,7 @@ export const generateReservationPdfBuffer = async (reservation: Reservation): Pr
     const pageWidth = doc.page.width;
 
     // Logo path
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    const logoPath = path.join(__dirname, "../assets/logo/lab-logo.jpeg");
+    const logoPath = path.join(process.cwd(), "public/logo/lab-logo.jpeg");
 
     // -------------------------------------------------------
     // LOGO

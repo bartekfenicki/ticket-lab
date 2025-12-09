@@ -76,11 +76,14 @@ export const sendReservationByEmail = async (req: Request, res: Response) => {
     const transporter = nodemailer.createTransport({
       host: process.env.MAIL_HOST,
       port: Number(process.env.MAIL_PORT),
-      secure: false,
+      secure: Number(process.env.MAIL_PORT) === 587,
       auth: {
         user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS
-      }
+        pass: process.env.MAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
     });
 
     await transporter.sendMail({

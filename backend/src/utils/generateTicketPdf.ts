@@ -3,7 +3,6 @@ import QRCode from "qrcode";
 import type { TicketWithItems } from "../models/ticketModel.js";
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 
 export const generateTicketPdfBuffer = async (ticket: TicketWithItems): Promise<Buffer> => {
   return new Promise(async (resolve, reject) => {
@@ -19,10 +18,7 @@ export const generateTicketPdfBuffer = async (ticket: TicketWithItems): Promise<
     // -----------------------------------------------------------------
     // LOGO
     // -----------------------------------------------------------------
-   const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-
-    const logoPath = path.join(__dirname, "../assets/logo/lab-logo.jpeg");
+const logoPath = path.join(process.cwd(), "public/logo/lab-logo.jpeg");
 
     try {
       if (fs.existsSync(logoPath)) {
