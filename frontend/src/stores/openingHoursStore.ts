@@ -40,7 +40,7 @@ export const useOpeningHoursStore = defineStore("openingHours", {
       this.loading = true;
       this.error = null;
       try {
-        const res = await fetch("/api/opening-hours");
+        const res = await apiFetch("/api/opening-hours");
         if (!res.ok) throw new Error("Failed to fetch opening hours");
         this.openingHours = await res.json();
       } catch (err: any) {
