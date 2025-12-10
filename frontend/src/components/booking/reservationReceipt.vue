@@ -70,7 +70,7 @@ const route = useRoute();
 const reservationStore = useReservationStore();
 const reservationId = Number(route.query.id); // Pass reservation ID in query param
 const emailLogsStore = useEmailLogsStore();
-console.log(reservationId)
+
 onMounted(async () => {
   if (reservationId) {
     await reservationStore.fetchReservationById(reservationId);
@@ -85,7 +85,6 @@ onMounted(async () => {
 
 const reservation = computed(() => reservationStore.currentReservation);
 
-console.log(reservation)
 
 const formatPrice = (price: number, type: string) =>
   type === "per_person" ? `${price} PLN / person` : `${price} PLN`;
@@ -116,7 +115,7 @@ const sendReservationEmail = async (reservationData: any) => {
     };
 
     await emailLogsStore.createEmailLog(emailLogPayload);
-    console.log("✅ Email log created for reservation.");
+
   } catch (err) {
     console.error("❌ Failed to send reservation email or log:", err);
   }

@@ -12,53 +12,20 @@ import {
 
 const router = Router();
 
+
+router.post("/", createUser);
+router.post("/login", loginUser);
+router.get("/", getUsers);
+router.get("/:id", getUserById);
+router.put("/:id", updateUser);
+router.delete("/:id", deleteUser);
+
 /**
  * @swagger
  * tags:
  *   name: Users
- *   description: User management
+ *   description: Manage staff users
  */
-
-/**
- * @swagger
- * /api/users:
- *   post:
- *     summary: Create a new user
- *     tags: [Users]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/User'
- *     responses:
- *       201:
- *         description: User created successfully
- *       400:
- *         description: Invalid input
- */
-router.post("/", createUser);
-
-/**
- * @swagger
- * /api/users/login:
- *   post:
- *     summary: login to existing user
- *     tags: [Users]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/User'
- *     responses:
- *       201:
- *         description: User created successfully
- *       400:
- *         description: Invalid input
- */
-router.post("/login", loginUser);
-
 
 /**
  * @swagger
@@ -74,9 +41,10 @@ router.post("/login", loginUser);
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/User'
+ *                 $ref: '#/components/schemas/StaffUser'
+ *       500:
+ *         description: Server error
  */
-router.get("/", getUsers);
 
 /**
  * @swagger
@@ -90,18 +58,90 @@ router.get("/", getUsers);
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 1
+ *         description: User ID
  *     responses:
  *       200:
  *         description: User details
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
+ *               $ref: '#/components/schemas/StaffUser'
  *       404:
  *         description: User not found
+ *       500:
+ *         description: Server error
  */
-router.get("/:id", getUserById);
 
+/**
+ * @swagger
+ * /api/users:
+ *   post:
+ *     summary: Create a new user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password_hash
+ *               - role
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "John Doe"
+ *               email:
+ *                 type: string
+ *                 example: "john@example.com"
+ *               password_hash:
+ *                 type: string
+ *                 example: "hashedpassword123"
+ *               role:
+ *                 type: string
+ *                 example: "admin"
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *       400:
+ *         description: Invalid data
+ *       500:
+ *         description: Server error
+ */
+
+/**
+ * @swagger
+ * /api/users/login:
+ *   post:
+ *     summary: Login a user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password_hash
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "john@example.com"
+ *               password_hash:
+ *                 type: string
+ *                 example: "hashedpassword123"
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *       401:
+ *         description: Invalid credentials
+ *       500:
+ *         description: Server error
+ */
 
 /**
  * @swagger
@@ -115,19 +155,37 @@ router.get("/:id", getUserById);
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 1
+ *         description: User ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/User'
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "John Doe Updated"
+ *               email:
+ *                 type: string
+ *                 example: "john@example.com"
+ *               password_hash:
+ *                 type: string
+ *                 example: "newhashedpassword123"
+ *               role:
+ *                 type: string
+ *                 example: "admin"
  *     responses:
  *       200:
  *         description: User updated successfully
+ *       400:
+ *         description: Invalid data
  *       404:
  *         description: User not found
+ *       500:
+ *         description: Server error
  */
-router.put("/:id", updateUser);
 
 /**
  * @swagger
@@ -141,12 +199,40 @@ router.put("/:id", updateUser);
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 1
+ *         description: User ID
  *     responses:
  *       200:
  *         description: User deleted successfully
  *       404:
  *         description: User not found
+ *       500:
+ *         description: Server error
  */
-router.delete("/:id", deleteUser);
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     StaffUser:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           example: 1
+ *         name:
+ *           type: string
+ *           example: "John Doe"
+ *         email:
+ *           type: string
+ *           example: "john@example.com"
+ *         password_hash:
+ *           type: string
+ *           example: "hashedpassword123"
+ *         role:
+ *           type: string
+ *           example: "admin"
+ */
+
 
 export default router;

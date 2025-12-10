@@ -11,7 +11,7 @@
       Create New Event
     </button>
 
-    <!-- Events Table (responsive) -->
+    <!-- Events Table  -->
     <div class="overflow-x-auto hidden md:block mt-4">
       <table class="w-full border-collapse border border-gray-300 min-w-[600px]">
         <thead class="bg-gray-50">
@@ -136,18 +136,15 @@ const form = reactive<SpecialEvent>({
   active: true,
 })
 
-// Load events & ticket types initially
 onMounted(async () => {
   await store.fetchEvents()
   await ticketTypeStore.fetchTicketTypes()
 })
 
-// Only ticket types marked as special events
 const specialTicketTypes = computed(() =>
   ticketTypeStore.ticketTypes.filter(type => type.is_special_event)
 )
 
-// Helpers
 const formatDate = (date: string) => {
   const [y, m, d] = date.split("-")
   return `${d}.${m}.${y}`

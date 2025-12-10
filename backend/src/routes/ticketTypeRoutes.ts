@@ -9,11 +9,18 @@ import {
 
 const router = Router();
 
+
+router.get("/", getTicketTypes);
+router.get("/:id", getTicketType);
+router.post("/", createNewTicketType);
+router.put("/:id", updateExistingTicketType);
+router.delete("/:id", deleteExistingTicketType);
+
 /**
  * @swagger
  * tags:
  *   name: TicketTypes
- *   description: Ticket type management
+ *   description: Manage ticket types
  */
 
 /**
@@ -31,14 +38,15 @@ const router = Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/TicketType'
+ *       500:
+ *         description: Server error
  */
-router.get("/", getTicketTypes);
 
 /**
  * @swagger
  * /api/ticket-types/{id}:
  *   get:
- *     summary: Get ticket type by ID
+ *     summary: Get a ticket type by ID
  *     tags: [TicketTypes]
  *     parameters:
  *       - in: path
@@ -46,19 +54,26 @@ router.get("/", getTicketTypes);
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 1
+ *         description: Ticket type ID
  *     responses:
  *       200:
- *         description: Ticket type data
+ *         description: Ticket type details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TicketType'
  *       404:
- *         description: Not found
+ *         description: Ticket type not found
+ *       500:
+ *         description: Server error
  */
-router.get("/:id", getTicketType);
 
 /**
  * @swagger
  * /api/ticket-types:
  *   post:
- *     summary: Create a ticket type
+ *     summary: Create a new ticket type
  *     tags: [TicketTypes]
  *     requestBody:
  *       required: true
@@ -68,15 +83,18 @@ router.get("/:id", getTicketType);
  *             $ref: '#/components/schemas/TicketType'
  *     responses:
  *       201:
- *         description: Ticket type created
+ *         description: Ticket type created successfully
+ *       400:
+ *         description: Invalid data
+ *       500:
+ *         description: Server error
  */
-router.post("/", createNewTicketType);
 
 /**
  * @swagger
  * /api/ticket-types/{id}:
  *   put:
- *     summary: Update a ticket type
+ *     summary: Update an existing ticket type
  *     tags: [TicketTypes]
  *     parameters:
  *       - in: path
@@ -84,33 +102,74 @@ router.post("/", createNewTicketType);
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 1
+ *         description: Ticket type ID
  *     requestBody:
- *       description: Updated ticket type fields
  *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/TicketType'
  *     responses:
  *       200:
- *         description: Updated ticket type
+ *         description: Ticket type updated successfully
+ *       400:
+ *         description: Invalid data
  *       404:
- *         description: Not found
+ *         description: Ticket type not found
+ *       500:
+ *         description: Server error
  */
-router.put("/:id", updateExistingTicketType);
 
 /**
  * @swagger
  * /api/ticket-types/{id}:
  *   delete:
- *     summary: Delete a ticket type
+ *     summary: Delete a ticket type by ID
  *     tags: [TicketTypes]
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
  *         schema:
  *           type: integer
- *         required: true
+ *           example: 1
+ *         description: Ticket type ID
  *     responses:
  *       200:
- *         description: Ticket type deleted
+ *         description: Ticket type deleted successfully
+ *       404:
+ *         description: Ticket type not found
+ *       500:
+ *         description: Server error
  */
-router.delete("/:id", deleteExistingTicketType);
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     TicketType:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           example: 1
+ *         name:
+ *           type: string
+ *           example: "VIP Ticket"
+ *         price:
+ *           type: number
+ *           example: 50
+ *         description:
+ *           type: string
+ *           example: "Front row seating with complimentary drinks"
+ *         is_special_event:
+ *           type: boolean
+ *           example: true
+ *         active:
+ *           type: boolean
+ *           example: true
+ */
+
 
 export default router;

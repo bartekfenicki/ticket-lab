@@ -5,8 +5,8 @@ export interface EmailLog {
   id?: number;
   email: string;
   subject: string;
-  type: string;        // e.g. "reservation", "ticket", "system", etc.
-  sent_at: string;     // timestamp
+  type: string;
+  sent_at: string;
 }
 
 interface EmailLogState {
@@ -23,7 +23,6 @@ export const useEmailLogsStore = defineStore("emailLogs", {
   }),
 
   actions: {
-    // ========== FETCH ALL ==========
     async fetchEmailLogs() {
       this.loading = true;
       this.error = null;
@@ -38,7 +37,6 @@ export const useEmailLogsStore = defineStore("emailLogs", {
       }
     },
 
-    // ========== FETCH SINGLE ==========
     async fetchEmailLog(id: number) {
       this.loading = true;
       this.error = null;
@@ -46,7 +44,6 @@ export const useEmailLogsStore = defineStore("emailLogs", {
         const res = await apiFetch(`/api/email-logs/${id}`);
         if (!res.ok) throw new Error("Failed to fetch email log");
         const log = await res.json();
-        // Optional: add/update in state
         const index = this.emailLogs.findIndex((l) => l.id === id);
         if (index > -1) this.emailLogs[index] = log;
         else this.emailLogs.push(log);
@@ -59,7 +56,6 @@ export const useEmailLogsStore = defineStore("emailLogs", {
       }
     },
 
-    // ========== CREATE ==========
     async createEmailLog(payload: Omit<EmailLog, "id">) {
       this.loading = true;
       this.error = null;
@@ -81,7 +77,6 @@ export const useEmailLogsStore = defineStore("emailLogs", {
       }
     },
 
-    // ========== UPDATE ==========
     async updateEmailLog(id: number, payload: Partial<EmailLog>) {
       this.loading = true;
       this.error = null;
@@ -104,7 +99,6 @@ export const useEmailLogsStore = defineStore("emailLogs", {
       }
     },
 
-    // ========== DELETE ==========
     async deleteEmailLog(id: number) {
       this.loading = true;
       this.error = null;

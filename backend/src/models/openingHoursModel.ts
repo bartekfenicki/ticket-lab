@@ -2,9 +2,9 @@ import { pool } from "../config/db.js";
 
 export interface OpeningHour {
   id: number;
-  day_of_week: string;   // e.g. "monday"
-  open_time: string;     // "09:00"
-  close_time: string;    // "17:00"
+  day_of_week: string;
+  open_time: string;
+  close_time: string;
   active: boolean;
   created_at: string;
   updated_at: string;

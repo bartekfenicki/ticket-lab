@@ -86,13 +86,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useReservationOptionTypesStore } from "@/stores/reservationOptionTypesStore";
 import { useOptionTypeVariantsStore } from "@/stores/optionTypeVariantStore";
 import { useReservationOptionAddOnsStore } from "@/stores/addOnsStore";
-import { useRouter } from "vue-router";
 
-const router = useRouter();
+
+
 
 const optionTypesStore = useReservationOptionTypesStore();
 const variantsStore = useOptionTypeVariantsStore();

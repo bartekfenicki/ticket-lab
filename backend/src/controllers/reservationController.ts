@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import * as reservationsModel from "../models/reservationModel.js";
 import { generateReservationPdfBuffer } from "../utils/generateResevationPdf.js";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 // GET ALL
 export const getReservations = async (req: Request, res: Response) => {
   try {
@@ -60,45 +60,43 @@ export const deleteExistingReservation = async (req: Request, res: Response) => 
   }
 };
 
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 export const sendReservationByEmail = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
     const reservation = await reservationsModel.getReservationById(id);
 
     if (!reservation) {
-      return res.status(404).json({ message: "Ticket not found" });
+      return res.status(404).json({ message: "Reservation not found" });
     }
 
     // Generate PDF buffer
     const pdfBuffer = await generateReservationPdfBuffer(reservation);
 
-    // Email transporter
-   const transporter = nodemailer.createTransport({
-  host: process.env.MAIL_HOST,
-  port: Number(process.env.MAIL_PORT),
-  secure: false,               // ALWAYS false for port 587
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-});
+    // Send email with Resend
+    const emailResponse = await resend.emails.send({
+      from: process.env.RESEND_FROM!,
+      to: process.env.MAIL_USER!,    // admin email or wherever
+      subject: `Reservation request from ${reservation.first_name} ${reservation.last_name}`,
+      text: `Attached is the reservation summary for ${reservation.first_name} ${reservation.last_name}.
+            Send payment details to ${reservation.email}.
+            Manage reservation here: ${process.env.WEB_LINK}`,
 
-    await transporter.sendMail({
-      from: '"New Reservation" <no-reply@yourdomain.com>',
-      to: process.env.MAIL_USER,
-      subject: `Reservation request from ${reservation.first_name + " " + reservation.last_name}`,
-      text: `Attached is the requested reservation summary from ${reservation.first_name + " " + reservation.last_name}. Send Payment details to ${reservation.email}. Return to the website to change the reservation status ${process.env.WEB_LINK}`,
       attachments: [
         {
           filename: `reservation-${reservation.last_name}.pdf`,
-          content: pdfBuffer,
-        }
+          content: pdfBuffer.toString("base64"),
+        },
       ]
     });
 
+    console.log("RESEND EMAIL RESPONSE:", emailResponse);
+
     return res.json({ message: "Email sent" });
+
   } catch (err) {
-    console.error(err);
+    console.error("Resend email error:", err);
     return res.status(500).json({ message: "Failed to send email" });
   }
 };

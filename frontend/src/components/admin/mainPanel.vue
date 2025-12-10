@@ -142,7 +142,7 @@ const todaysRevenue = computed(() =>
 const totalTicketRevenue = computed(() =>
   todaysTickets.value.reduce((sum, t) => sum + Number(t.total_price), 0)
 )
-console.log(totalTicketRevenue.value)
+
 // UPCOMING RESERVATIONS & TICKETS (next 3)
 const upcomingReservations = computed(() =>
   reservations.reservations

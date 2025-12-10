@@ -6,7 +6,6 @@ import nodemailer from "nodemailer";
 
 export const createTicket = async (req: Request, res: Response) => {
   try {
-    console.log("Incoming ticket creation request:", req.body); // <-- log request
 
     const {
       date,
@@ -14,40 +13,33 @@ export const createTicket = async (req: Request, res: Response) => {
       phone,
       full_name,
       other_names,
-      items, // array of {id, price, quantity}
+      items,
     } = req.body;
 
-    // Validate tickets array
     if (!items || !Array.isArray(items) || items.length === 0) {
       console.error("Tickets array is invalid:", items); // <-- log invalid array
       return res.status(400).json({ error: "Tickets array is required" });
     }
 
-    // Validate required fields
     if (!date || !email || !full_name) {
       console.error("Missing required fields:", { date, email, full_name }); // <-- log missing
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // Convert numeric fields in ticket items
     for (const t of items) {
       t.quantity = Number(t.quantity);
       t.price = Number(t.price);
       if (isNaN(t.quantity) || isNaN(t.price)) {
-        console.error("Invalid ticket item numbers:", t); // <-- log invalid numbers
+        console.error("Invalid ticket item numbers:", t);
         return res.status(400).json({ error: "Invalid ticket item numbers" });
       }
     }
 
-    // Calculate total
     const total_price = items.reduce(
       (sum: number, t: any) => sum + t.price * t.quantity,
       0
     );
 
-    console.log("Calculated total price:", total_price);
-
-    // Create parent ticket
     const ticket = await ticketModel.createTicket({
       date,
       email,
@@ -59,9 +51,7 @@ export const createTicket = async (req: Request, res: Response) => {
       qr_token: uuidv4(),
     });
 
-    console.log("Ticket created:", ticket.id);
 
-    // Create ticket items
     for (const t of items) {
       await ticketModel.createTicketItem({
         ticket_id: ticket.id,

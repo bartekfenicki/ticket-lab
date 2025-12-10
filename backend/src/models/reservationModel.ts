@@ -99,8 +99,8 @@ export const createReservation = async (
       last_name,
       phone,
       option_type_id,
-      JSON.stringify(selected_variant),   // JSONB
-      JSON.stringify(selected_add_ons),  // JSONB
+      JSON.stringify(selected_variant),
+      JSON.stringify(selected_add_ons),
     ]
   );
 
@@ -113,14 +113,13 @@ export const updateReservation = async (
   id: number,
   data: Partial<Reservation>
 ): Promise<Reservation | null> => {
-  // Remove updated_at if the frontend sent it
+
   const filteredData = { ...data };
   delete filteredData.updated_at;
 
   const fields = Object.keys(filteredData);
   const values = Object.values(filteredData);
 
-  // If no fields to update → only bump updated_at
   if (fields.length === 0) {
     const result = await pool.query(
       `UPDATE reservations

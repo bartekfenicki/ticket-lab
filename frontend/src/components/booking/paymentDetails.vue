@@ -206,7 +206,7 @@ const handlePayment = async () => {
       })),
     }
 
-    console.log("Ticket payload being sent:", ticketPayload);
+
 
 const newTicket = await ticketStore.createTicket(ticketPayload);
 if (!newTicket) {
@@ -217,14 +217,12 @@ if (!newTicket?.id) {
   throw new Error("Ticket creation returned invalid ticket with no id");
 }
 
-console.log("Ticket created successfully:", newTicket);
 
 const totalItemsBought = ticketPayload.items.reduce(
       (sum, item) => sum + Number(item.quantity),
       0
     );
 
-    console.log("Total items purchased:", totalItemsBought);
 
     // Try updating backend
     await updateSoldQuantityForDate(ticketPayload.date, totalItemsBought);

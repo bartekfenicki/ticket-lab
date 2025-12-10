@@ -54,7 +54,6 @@ export const useTicketStore = defineStore("ticketStore", () => {
       if (!res.ok) throw new Error("Failed to fetch ticket");
       const ticket: Ticket = await res.json();
 
-      // Optional: update tickets array if you want to cache it
       const index = tickets.value.findIndex(t => t.id === id);
       if (index >= 0) {
         tickets.value[index] = ticket;
@@ -123,7 +122,6 @@ export const useTicketStore = defineStore("ticketStore", () => {
 
     const updated: Ticket = await res.json();
 
-    // Update local state safely
     tickets.value = tickets.value.map(t =>
       t.id === id ? { ...t, ...updated } : t
     );

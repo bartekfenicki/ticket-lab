@@ -82,7 +82,6 @@ onMounted(async () => {
   stats.loadStats();
 });
 
-/* ---------------- MONTH SELECTOR ---------------- */
 const months = computed(() => Object.keys(stats.revenueByMonth));
 
 const selectedMonth = ref("");
@@ -93,7 +92,6 @@ watch(months, (list) => {
   }
 });
 
-/* ---------------- MONTHLY REVENUE CHART ---------------- */
 const chartMonthData = computed(() => ({
   labels: Object.keys(stats.revenueByMonth),
   datasets: [
@@ -105,7 +103,6 @@ const chartMonthData = computed(() => ({
   ],
 }));
 
-/* ---------------- PAID TICKETS COUNT ---------------- */
 const chartTicketCountData = computed(() => {
   const countMap: Record<string, number> = {};
 
@@ -126,7 +123,6 @@ const chartTicketCountData = computed(() => {
   };
 });
 
-/* ---------------- DAILY REVENUE ---------------- */
 const selectedMonthRevenueMap = computed(() => {
   const result: Record<string, number> = {};
   Object.entries(stats.revenueByDay).forEach(([day, value]) => {
@@ -156,7 +152,6 @@ const chartDayData = computed(() => ({
   ],
 }));
 
-/* ---------------- TICKET TYPES ---------------- */
 const chartTicketTypeData = computed(() => {
   const labels: string[] = [];
   const quantities: number[] = [];
@@ -181,7 +176,6 @@ const chartTicketTypeData = computed(() => {
 });
 
 
-/* ---------------- OPTIONS ---------------- */
 const chartOptions = { responsive: true };
 const totalRevenue = computed(() => stats.totalRevenue);
 </script>

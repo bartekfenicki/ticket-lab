@@ -110,7 +110,6 @@ export const useReservationStore = defineStore("reservationStore", () => {
     }
   };
 
-  // 🔥 UPDATE RESERVATION BY ID
   const updateReservation = async (id: number, updatedData: Partial<Reservation>) => {
     loading.value = true;
     error.value = null;
@@ -126,7 +125,6 @@ export const useReservationStore = defineStore("reservationStore", () => {
 
       const updated = await res.json();
 
-      // update list in store
       const index = reservations.value.findIndex(r => r.id === id);
       if (index !== -1) reservations.value[index] = updated;
 
@@ -139,7 +137,6 @@ export const useReservationStore = defineStore("reservationStore", () => {
     }
   };
 
-  // 🔥 DELETE RESERVATION
   const deleteReservation = async (id: number) => {
     loading.value = true;
     error.value = null;

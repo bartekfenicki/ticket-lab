@@ -112,7 +112,6 @@ import type { TicketType } from "@/stores/ticketTypesStore";
 
 const ticketStore = useTicketTypeStore();
 
-// New ticket reactive object
 const newTicket = reactive<Omit<TicketType, "id">>({
   name: "",
   price: 0,
@@ -121,15 +120,12 @@ const newTicket = reactive<Omit<TicketType, "id">>({
   active: true,
 });
 
-// Fetch ticket types on mount
 onMounted(() => {
   ticketStore.fetchTicketTypes();
 });
 
-// Add a ticket type
 const addTicketType = async () => {
   await ticketStore.createTicketType(newTicket);
-  // Reset form
   newTicket.name = "";
   newTicket.price = 0;
   newTicket.description = "";
@@ -137,20 +133,17 @@ const addTicketType = async () => {
   newTicket.active = true;
 };
 
-// Update ticket type
 const updateTicket = async (ticket: TicketType) => {
   if (!ticket.id) return;
   await ticketStore.updateTicketType(ticket.id, ticket);
 };
 
-// Delete ticket type
 const deleteTicket = async (id: number) => {
   await ticketStore.deleteTicketType(id);
 };
 </script>
 
 <style scoped>
-/* Optional minor styling tweaks */
 table input[type="text"], table input[type="number"] {
   background-color: transparent;
 }

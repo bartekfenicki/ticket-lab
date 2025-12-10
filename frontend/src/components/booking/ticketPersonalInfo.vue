@@ -68,7 +68,6 @@ interface PersonalInfo {
   names: string
 }
 
-// Correct v-model prop
 const props = defineProps<{
   modelValue: PersonalInfo
 }>()

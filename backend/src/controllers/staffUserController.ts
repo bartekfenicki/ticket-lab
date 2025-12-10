@@ -3,12 +3,11 @@ import * as userModel from "../models/staffUserModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
+const JWT_SECRET = process.env.JWT_SECRET;
 
-// ✅ Create a user
+// Create a user
 export const createUser = async (req: Request, res: Response) => {
   try {
-    console.log("Request body:", req.body);
     const user = await userModel.createUser(req.body);
     res.status(201).json(user);
   } catch (err) {
@@ -17,7 +16,7 @@ export const createUser = async (req: Request, res: Response) => {
   }
 };
 
-// ✅ Login user
+// Login user
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
@@ -31,10 +30,9 @@ export const loginUser = async (req: Request, res: Response) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    // ✅ Generate JWT
     const token = jwt.sign(
       { id: user.id, role: user.role, name: user.name },
-      JWT_SECRET,
+      JWT_SECRET!,
       { expiresIn: "8h" }
     );
 
@@ -49,7 +47,7 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-// ✅ Get all users
+// Get all users
 export const getUsers = async (_req: Request, res: Response) => {
   try {
     const users = await userModel.getAllUsers();
@@ -62,7 +60,7 @@ export const getUsers = async (_req: Request, res: Response) => {
 
 
 
-// ✅ Get single user by ID
+// Get single user by ID
 export const getUserById = async (req: Request, res: Response) => {
   try {
     const user = await userModel.getUserById(Number(req.params.id));
@@ -74,13 +72,13 @@ export const getUserById = async (req: Request, res: Response) => {
   }
 };
 
-// ✅ Update user
+// Update user
 export const updateUser = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   const updates: userModel.StaffUser = { ...req.body };
 
   try {
-    // ✅ Handle password hashing
+    // Handle password hashing
     if (updates.password_hash) {
       updates.password_hash = await bcrypt.hash(updates.password_hash, 10);
     }
@@ -97,7 +95,7 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 };
 
-// ✅ Delete user
+// Delete user
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const success = await userModel.deleteUser(Number(req.params.id));

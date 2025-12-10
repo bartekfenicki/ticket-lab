@@ -4,8 +4,8 @@ export interface EmailLog {
   id: number;
   email: string;
   subject: string;
-  type: string;        // e.g. "reservation", "ticket", "system", etc.
-  sent_at: string;     // timestamp
+  type: string;
+  sent_at: string;
 }
 
 // Get all logs

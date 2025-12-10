@@ -43,7 +43,6 @@ export const createVariant = async (data: Omit<ReservationOptionTypeVariant, "id
 };
 
 export const updateVariant = async (id: number, data: Partial<ReservationOptionTypeVariant>) => {
-  // Remove updated_at from incoming data
   const filteredData = { ...data };
   delete filteredData.updated_at;
 
@@ -51,7 +50,6 @@ export const updateVariant = async (id: number, data: Partial<ReservationOptionT
   const values = Object.values(filteredData);
 
   if (fields.length === 0) {
-    // Nothing to update, just update updated_at
     const result = await pool.query(
       `UPDATE reservation_option_type_variants
        SET updated_at = NOW()

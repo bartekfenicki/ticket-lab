@@ -51,7 +51,6 @@ const store = useOpeningHoursStore();
 
 const daysOfWeek = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
 
-// initialize form immediately with defaults
 const form = reactive<Record<string, { open_time: string; close_time: string; active: boolean }>>({});
 
 daysOfWeek.forEach(day => {
@@ -64,7 +63,6 @@ daysOfWeek.forEach(day => {
 
 onMounted(async () => {
   await store.fetchOpeningHours();
-  // populate form with existing values from store
   daysOfWeek.forEach(day => {
     const existing = store.byDay[day];
     if (existing) {
@@ -84,10 +82,10 @@ const saveDay = async (day: string) => {
   };
 
   if (store.byDay[day]) {
-    // update existing
+
     await store.updateOpeningHour(store.byDay[day].id!, payload);
   } else {
-    // create new
+
     await store.createOpeningHour(payload);
   }
 };

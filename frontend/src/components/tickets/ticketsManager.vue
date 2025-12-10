@@ -118,24 +118,20 @@ import { storeToRefs } from 'pinia'
 import jsPDF from "jspdf";
 import QRCode from "qrcode";
 
-// Pinia store
 const ticketStore = useTicketStore()
 const { tickets, loading, error } = storeToRefs(ticketStore)
 
-// Filters
 const searchEmail = ref('')
 const paymentFilter = ref('')
 const showUnusedOnly = ref(false)
 const dateFilter = ref('')
 
-// Fetch tickets on mount
 const fetchTickets = async () => {
   await ticketStore.fetchAllTickets()
 }
 
 onMounted(fetchTickets)
 
-// Helper function to format dates nicely
 const formatDate = (dateStr: string) => {
   if (!dateStr) return "-"
   const d = new Date(dateStr)
@@ -147,7 +143,6 @@ const formatDate = (dateStr: string) => {
   })
 }
 
-// Computed filtered tickets
 const filteredTickets = computed(() => {
   return tickets.value.filter(ticket => {
     let matches = true
@@ -164,7 +159,6 @@ const filteredTickets = computed(() => {
       matches = !ticket.used
     }
 
-    // NEW: Date filter
     if (matches && dateFilter.value) {
       const ticketDate = new Date(ticket.date).toISOString().split("T")[0]
       matches = ticketDate === dateFilter.value

@@ -49,7 +49,6 @@ const handleProceed = (data: any) => {
 }
 </script>
 <style scoped>
-/* Fade transition for step changes */
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.3s ease;
 }

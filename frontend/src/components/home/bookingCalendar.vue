@@ -144,7 +144,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSpecialEventsStore } from '@/stores/specialEventsStore'
 import { useReservationStore } from '@/stores/reservationStore'
@@ -172,9 +172,6 @@ onMounted(async () => {
     await closedDays.fetchClosedDays()
     await ticketStockStore.fetchStocks();
 
-  console.log("Closed days:", closedDays.byDate)
-  console.log("Reservations loaded:", reservations.reservations)
-  console.log("By date:", reservationsByDate.value)
 })
 
 const monthNames = [
@@ -189,13 +186,7 @@ const daysInMonth = computed(() => new Date(currentYear.value, currentMonth.valu
 // First day offset
 const firstDayOfMonth = computed(() => new Date(currentYear.value, currentMonth.value, 1).getDay())
 
-watch(
-  () => reservations.reservations,
-  (newVal) => {
-    console.log("Reservations updated:", newVal)
-  },
-  { deep: true }
-)
+
 
 
 // Load events from store
@@ -240,7 +231,6 @@ const formatTime = (isoDate: string) => {
   return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
 }
 
-console.log(hasReservation)
 
 // Check if a day has an event
 const hasEvent = (day: number) => {

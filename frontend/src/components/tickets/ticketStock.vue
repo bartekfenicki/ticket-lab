@@ -121,7 +121,6 @@ import type { TicketStock } from '@/stores/ticketStockStore'
 
 const store = useTicketStockStore()
 
-// State
 const defaultStock = ref(100)
 const selectedMonth = ref(new Date().getMonth())
 const selectedYear = ref(new Date().getFullYear())
@@ -139,13 +138,10 @@ const formatWeekday = (date: Date) => {
 
 const yearOptions = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() + i)
 
-// Map of date keys to stock objects
 const dayStocks = ref<Record<string, TicketStock>>({})
 
-// Helper to format Date as key
 const dayKey = (date: Date): string => date.toISOString().split("T")[0]!
 
-// Compute all days in the selected month
 const monthDays = computed(() => {
   const year = selectedYear.value
   const month = selectedMonth.value
@@ -158,13 +154,11 @@ const monthDays = computed(() => {
   return days
 })
 
-// Calculate offset for the first week
 const monthStartOffset = computed(() => {
   const firstDay = new Date(selectedYear.value, selectedMonth.value, 1)
   return firstDay.getDay()
 })
 
-// Helper to get or create stock for a day
 const getDayStock = (day: Date): TicketStock => {
   const key = dayKey(day)
 
@@ -178,7 +172,6 @@ const getDayStock = (day: Date): TicketStock => {
     }
   }
 
-  // sanitize every time
   const stock = dayStocks.value[key]
   stock.total_quantity = Number(stock.total_quantity) || 0
   stock.sold_quantity = Number(stock.sold_quantity) || 0
@@ -187,7 +180,6 @@ const getDayStock = (day: Date): TicketStock => {
 }
 
 
-// Load existing stocks for the month
 const loadMonthStocks = async () => {
   await store.fetchStocks()
 
@@ -196,10 +188,9 @@ const loadMonthStocks = async () => {
     const existing = store.stocks.find(s => s.date.slice(0,10) === key)
 
     if (existing) {
-      // copy full object with ID
+
       dayStocks.value[key] = { ...existing }
     } else {
-      // create *placeholder* with no ID
       dayStocks.value[key] = {
         ticket_type_id: 1,
         date: key,
@@ -219,7 +210,6 @@ const sanitizeStock = (stock: any) => {
   }
 }
 
-// Bulk actions
 const applyDefaultToAll = () => {
   monthDays.value.forEach(day => getDayStock(day).total_quantity = defaultStock.value)
 }
@@ -240,7 +230,6 @@ const saveAllStocks = async () => {
   for (const day of monthDays.value) {
     const stock = sanitizeStock(getDayStock(day))
 
-    // Remove ID when upserting
     const { id, updated_at, ...payload } = stock
 
     await store.upsertStock(payload)
@@ -248,7 +237,6 @@ const saveAllStocks = async () => {
   alert("All stocks saved!")
 }
 
-// Load initial stocks (initialize days)
 onMounted(async() => {
   await store.fetchStocks()
   monthDays.value.forEach(day => getDayStock(day))

@@ -56,10 +56,6 @@ export const createNewStock = async (req: Request, res: Response) => {
 export const updateExistingStock = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
 
-  console.log("🟣 updateExistingStock(): incoming request");
-  console.log("➡️ id:", id);
-  console.log("➡️ req.body:", req.body);
-
   try {
     const updated = await ticketStockModel.updateStock(id, req.body);
 
@@ -75,8 +71,7 @@ export const updateExistingStock = async (req: Request, res: Response) => {
 };
 
 export const upsertStockController = async (req: Request, res: Response) => {
-   console.log("🟣 UPSERT REQUEST RECEIVED");
-  console.log("req.body:", req.body);
+
   try {
     const stock = await ticketStockModel.upsertStock(req.body)
     res.json(stock)
@@ -103,8 +98,6 @@ export const deleteExistingStock = async (req: Request, res: Response) => {
 export const updateSoldQuantityController = async (req: Request, res: Response) => {
   const { date, increment } = req.body;
 
-  console.log("🟣 updateSoldQuantityController()");
-  console.log("date:", date, "increment:", increment);
 
   try {
     const updated = await ticketStockModel.incrementSoldQuantity(date, increment);

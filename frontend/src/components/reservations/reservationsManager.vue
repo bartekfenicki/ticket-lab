@@ -277,7 +277,6 @@ const store = useReservationStore();
 const reservations = computed(() => store.reservations);
 const loading = store.loading;
 const error = store.error;
-console.log(reservations)
 onMounted(async () => {
   await store.getAllReservations();
 

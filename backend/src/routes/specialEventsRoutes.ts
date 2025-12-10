@@ -9,11 +9,17 @@ import {
 
 const router = Router();
 
+router.get("/", getEvents);
+router.get("/:id", getEvent);
+router.post("/", createNewEvent);
+router.put("/:id", updateExistingEvent);
+router.delete("/:id", deleteExistingEvent);
+
 /**
  * @swagger
  * tags:
  *   name: SpecialEvents
- *   description: Special events management
+ *   description: Manage special events
  */
 
 /**
@@ -24,15 +30,22 @@ const router = Router();
  *     tags: [SpecialEvents]
  *     responses:
  *       200:
- *         description: List of events
+ *         description: List of special events
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/SpecialEvent'
+ *       500:
+ *         description: Server error
  */
-router.get("/", getEvents);
 
 /**
  * @swagger
  * /api/special-events/{id}:
  *   get:
- *     summary: Get special event by ID
+ *     summary: Get a special event by ID
  *     tags: [SpecialEvents]
  *     parameters:
  *       - in: path
@@ -40,13 +53,20 @@ router.get("/", getEvents);
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 1
+ *         description: Special event ID
  *     responses:
  *       200:
- *         description: Special event found
+ *         description: Special event details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SpecialEvent'
  *       404:
- *         description: Not found
+ *         description: Special event not found
+ *       500:
+ *         description: Server error
  */
-router.get("/:id", getEvent);
 
 /**
  * @swagger
@@ -62,15 +82,18 @@ router.get("/:id", getEvent);
  *             $ref: '#/components/schemas/SpecialEvent'
  *     responses:
  *       201:
- *         description: Special event created
+ *         description: Special event created successfully
+ *       400:
+ *         description: Invalid data
+ *       500:
+ *         description: Server error
  */
-router.post("/", createNewEvent);
 
 /**
  * @swagger
  * /api/special-events/{id}:
  *   put:
- *     summary: Update a special event
+ *     summary: Update an existing special event
  *     tags: [SpecialEvents]
  *     parameters:
  *       - in: path
@@ -78,21 +101,30 @@ router.post("/", createNewEvent);
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 1
+ *         description: Special event ID
  *     requestBody:
  *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/SpecialEvent'
  *     responses:
  *       200:
- *         description: Updated event
+ *         description: Special event updated successfully
+ *       400:
+ *         description: Invalid data
  *       404:
- *         description: Not found
+ *         description: Special event not found
+ *       500:
+ *         description: Server error
  */
-router.put("/:id", updateExistingEvent);
 
 /**
  * @swagger
  * /api/special-events/{id}:
  *   delete:
- *     summary: Delete a special event
+ *     summary: Delete a special event by ID
  *     tags: [SpecialEvents]
  *     parameters:
  *       - in: path
@@ -100,10 +132,47 @@ router.put("/:id", updateExistingEvent);
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 1
+ *         description: Special event ID
  *     responses:
  *       200:
- *         description: Deleted
+ *         description: Special event deleted successfully
+ *       404:
+ *         description: Special event not found
+ *       500:
+ *         description: Server error
  */
-router.delete("/:id", deleteExistingEvent);
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     SpecialEvent:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *           example: 1
+ *         title:
+ *           type: string
+ *           example: "Christmas Gala"
+ *         description:
+ *           type: string
+ *           example: "An evening of music, food, and celebration."
+ *         date:
+ *           type: string
+ *           format: date
+ *           example: "2025-12-25"
+ *         ticket_type_id:
+ *           type: integer
+ *           example: 2
+ *         max_tickets:
+ *           type: integer
+ *           example: 100
+ *         active:
+ *           type: boolean
+ *           example: true
+ */
+
 
 export default router;

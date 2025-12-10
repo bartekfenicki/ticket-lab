@@ -2,7 +2,7 @@ import { pool } from "../config/db.js";
 
 export interface ClosedDay {
   id: number;
-  date: string;       // ISO date string
+  date: string;
   reason: string | null;
   created_by: number;
   created_at: string;

@@ -82,7 +82,6 @@ onMounted(async () => {
   await stockStore.fetchStockByDate(props.date)
 
   ticketSelection.value = {}
-  console.log(stockStore.fetchStockByDate.length)
 })
 
 const eventForDay = computed(() =>

@@ -42,7 +42,6 @@ export const createAddOn = async (data: Omit<AddOn, "id" | "created_at" | "updat
 
 // Update add-on
 export const updateAddOn = async (id: number, data: Partial<AddOn>) => {
-  // Remove updated_at from incoming data
   const filteredData = { ...data };
   delete filteredData.updated_at;
 
@@ -50,7 +49,6 @@ export const updateAddOn = async (id: number, data: Partial<AddOn>) => {
   const values = Object.values(filteredData);
 
   if (fields.length === 0) {
-    // Nothing to update, just update updated_at
     const result = await pool.query(
       `UPDATE add_ons
        SET updated_at = NOW()

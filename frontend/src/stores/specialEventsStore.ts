@@ -1,4 +1,3 @@
-// src/stores/specialEventsStore.ts
 import { apiFetch } from '@/utils/api'
 import { defineStore } from 'pinia'
 
@@ -37,7 +36,7 @@ export const useSpecialEventsStore = defineStore('specialEvents', {
 
     this.events = data.map((e: any) => ({
       ...e,
-      date: e.date.split('T')[0]  // ← FIX HERE
+      date: e.date.split('T')[0]
     }))
       } catch (err: any) {
         this.error = err.message || 'Error fetching events'

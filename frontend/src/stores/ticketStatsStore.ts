@@ -11,7 +11,6 @@ export const useTicketStatsStore = defineStore("ticketStatsStore", () => {
   const paidTickets = ref([]);
   const ticketTypeStats = ref<Record<number, { name: string; quantity: number; revenue: number }>>({});
 
-  // MAIN CALCULATION
   const loadStats = () => {
     const tickets = ticketStore.tickets;
 
@@ -26,25 +25,21 @@ export const useTicketStatsStore = defineStore("ticketStatsStore", () => {
 
       if (isPaid) paidTickets.value.push(ticket);
 
-      const month = ticket.date.slice(0, 7); // YYYY-MM
-      const day = ticket.date.slice(0, 10); // YYYY-MM-DD
+      const month = ticket.date.slice(0, 7);
+      const day = ticket.date.slice(0, 10);
 
-      // ADD TOTAL REVENUE
       if (isPaid) totalRevenue.value += Number(ticket.total_price);
 
-      // REVENUE BY MONTH
       if (isPaid) {
         revenueByMonth.value[month] =
           (revenueByMonth.value[month] || 0) + Number(ticket.total_price);
       }
 
-      // REVENUE BY DAY
       if (isPaid) {
         revenueByDay.value[day] =
           (revenueByDay.value[day] || 0) + Number(ticket.total_price);
       }
 
-      // --- TICKET TYPES STATS ---
       ticket.items.forEach(item => {
         const price = Number(item.price_at_purchase);
 

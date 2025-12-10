@@ -118,14 +118,12 @@ const closeMenu = () => {
   isMenuOpen.value = false;
 };
 
-// Base links always visible
 const baseLinks = [
   { name: "Home", to: "/" },
   { name: "Pricing", to: "/pricing" },
   { name: "Contact", to: "/contact" },
 ];
 
-// Admin link should appear ONLY if logged in
 const navLinks = computed(() => {
   if (userStore.user) {
     return [...baseLinks, { name: "Admin", to: "/admin" }];
@@ -135,7 +133,6 @@ const navLinks = computed(() => {
 </script>
 
 <style scoped>
-/* Add smooth open/close animation for mobile menu */
 #mobile-menu {
   transition: all 0.2s ease-in-out;
 }

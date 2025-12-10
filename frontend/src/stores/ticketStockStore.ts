@@ -1,4 +1,3 @@
-// src/stores/ticketStockStore.ts
 import { apiFetch } from '@/utils/api'
 import { defineStore } from 'pinia'
 
@@ -80,8 +79,6 @@ export const useTicketStockStore = defineStore('ticketStock', {
     },
 
     async upsertStock(stock: Omit<TicketStock, "id" | "updated_at">) {
-        console.log("🟠 FRONTEND UPSERT CALLED");
-        console.log("➡️ Sending payload:", stock);
       this.loading = true
       try {
         const res = await apiFetch('/api/ticket-stock/upsert', {
@@ -91,7 +88,6 @@ export const useTicketStockStore = defineStore('ticketStock', {
         })
         if (!res.ok) throw new Error("Failed to save stock")
         const data = await res.json()
-    console.log("🟢 UPSERT RESPONSE:", data);
         const index = this.stocks.findIndex(
             (s) => s.date.slice(0, 10) === data.date && s.ticket_type_id === data.ticket_type_id
           )
@@ -127,7 +123,6 @@ export const useTicketStockStore = defineStore('ticketStock', {
     },
 
     async updateSoldQuantityForDate(date: string, increment: number) {
-      console.log("⬆️ Updating sold quantity for date:", date, "by", increment);
 
       const res = await apiFetch("/api/ticket-stock/update-sold", {
         method: "PUT",
@@ -139,7 +134,6 @@ export const useTicketStockStore = defineStore('ticketStock', {
 
       const updated = await res.json();
 
-      // Update local store
       const index = this.stocks.findIndex(
         s => s.date.slice(0, 10) === updated.date
       );

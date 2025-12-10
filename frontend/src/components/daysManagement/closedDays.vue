@@ -90,22 +90,18 @@
 import { ref, computed, onMounted } from "vue";
 import { useClosedDaysStore } from "@/stores/closedDaysStore";
 
-// STORES
 const closedDaysStore = useClosedDaysStore();
 
-// CALENDAR STATE
 const today = new Date();
 const currentMonth = ref(today.getMonth());
 const currentYear = ref(today.getFullYear());
 const selectedDate = ref<Date | null>(null);
 const reason = ref("");
 
-// LOAD DATA
 onMounted(() => {
   closedDaysStore.fetchClosedDays();
 });
 
-// CALENDAR HELPERS
 const monthNames = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
@@ -121,26 +117,22 @@ const firstDayOfMonth = computed(() =>
   new Date(currentYear.value, currentMonth.value, 1).getDay()
 );
 
-// SELECT DATE
 const selectDate = (day: number) => {
   selectedDate.value = new Date(currentYear.value, currentMonth.value, day);
   reason.value = "";
 };
 
-// LABEL
 const selectedDateLabel = computed(() => {
   if (!selectedDate.value) return "";
   const d = selectedDate.value;
   return `${monthNames[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 });
 
-// FORMAT YYYY-MM-DD
 const pad = (n: number) => String(n).padStart(2, "0");
 const formatDate = (d: Date) =>
   `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 
-// CHECK CLOSED DAY
-const normalize = (iso: string) => iso.slice(0, 10); // ← removes time / timezone
+const normalize = (iso: string) => iso.slice(0, 10);
 
 const closedDaysMap = computed(() => {
   const map: Record<string, any> = {};
@@ -153,37 +145,33 @@ const closedDaysMap = computed(() => {
 
 const isClosedDay = (day: number) => {
   const d = new Date(currentYear.value, currentMonth.value, day);
-  const key = d.toISOString().slice(0, 10); // normalized
+  const key = d.toISOString().slice(0, 10);
   return Boolean(closedDaysMap.value[key]);
 };
 
-// SELECTED CLOSED DAY
 const selectedClosedDay = computed(() => {
   if (!selectedDate.value) return null;
   return closedDaysMap.value[selectedDate.value.toISOString().slice(0, 10)] || null;
 });
 
-// CREATE CLOSED DAY
 const createClosed = async () => {
   if (!selectedDate.value || !reason.value.trim()) return;
 
   await closedDaysStore.createClosedDay({
     date: formatDate(selectedDate.value),
     reason: reason.value,
-    created_by: 1 // you can change later based on auth
+    created_by: 1
   });
 
   reason.value = "";
 };
 
-// DELETE CLOSED DAY
 const deleteSelected = async () => {
   if (!selectedClosedDay.value) return;
 
   await closedDaysStore.deleteClosedDay(selectedClosedDay.value.id);
 };
 
-// MONTH NAV
 const prevMonth = () => {
   currentMonth.value--;
   if (currentMonth.value < 0) {
@@ -200,7 +188,6 @@ const nextMonth = () => {
   }
 };
 
-// UI HELPERS
 const isSelected = (day: number) => {
   if (!selectedDate.value) return false;
   return (

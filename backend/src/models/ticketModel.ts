@@ -116,15 +116,12 @@ export const getTicketsByEmail = async (email: string): Promise<Ticket[]> => {
 
 // Get all tickets with their ticket types
 export const getAllTickets = async (): Promise<Ticket[]> => {
-  // 1. Get all tickets
   const ticketRes = await pool.query("SELECT * FROM tickets ORDER BY created_at DESC");
   const tickets = ticketRes.rows;
 
-  // 2. For each ticket, get its items from junction table
   const ticketIds = tickets.map(t => t.id);
   if (ticketIds.length === 0) return [];
 
-  // Query all items in one go using IN (...)
   const itemsRes = await pool.query(
     `
     SELECT ti.ticket_id, ti.ticket_type_id, tt.name, tt.price, ti.quantity
@@ -137,7 +134,6 @@ export const getAllTickets = async (): Promise<Ticket[]> => {
 
   const items = itemsRes.rows;
 
-  // Map items into tickets
   const ticketsWithItems = tickets.map(t => ({
     ...t,
     items: items.filter(i => i.ticket_id === t.id)
@@ -153,7 +149,6 @@ export const updateTicket = async (
   const fields = Object.keys(data);
   const values = Object.values(data);
 
-  // Nothing to update
   if (fields.length === 0) {
     const result = await pool.query(
       `SELECT * FROM tickets WHERE id = $1`,

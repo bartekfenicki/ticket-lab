@@ -2,7 +2,7 @@
   <div class="min-h-screen  py-12 px-4">
     <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-8 space-y-6">
       <h1 class="text-3xl font-bold text-green-700 mb-2 flex items-center gap-2">
-        🎫 Ticket Receipt
+         Ticket Receipt
       </h1>
 
       <!-- Loading state -->
@@ -49,8 +49,8 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useTicketStore } from '@/stores/ticketStore'
-import jsPDF from "jspdf"; // jsPDF is typed automatically
-import QRCode from "qrcode"; // QRCode is typed
+import jsPDF from "jspdf";
+import QRCode from "qrcode";
 import { useEmailLogsStore } from "@/stores/emailsLogStore";
 import { apiFetch } from '@/utils/api';
 
@@ -280,7 +280,6 @@ const sendTicketByEmail = async () => {
     };
 
     await emailLogsStore.createEmailLog(emailLogPayload);
-    console.log("✅ Email log created for reservation.");
 
     alert("📨 Ticket sent to email!");
   } catch (err) {

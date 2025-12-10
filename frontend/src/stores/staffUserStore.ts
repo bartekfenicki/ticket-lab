@@ -41,7 +41,7 @@ export const useUserStore = defineStore("user", {
           body: JSON.stringify({
             name: userData.name,
             email: userData.email,
-            password_hash: userData.password, // backend hashes it
+            password_hash: userData.password,
             role: userData.role,
           }),
         });

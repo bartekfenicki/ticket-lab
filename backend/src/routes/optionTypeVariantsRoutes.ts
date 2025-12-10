@@ -9,101 +9,245 @@ import {
 
 const router = Router();
 
+router.get("/", getVariants);
+router.get("/option-type/:optionTypeId", getVariantsByOptionType);
+router.post("/", createVariant);
+router.put("/:id", updateVariant);
+router.delete("/:id", deleteVariant);
+
 /**
  * @swagger
  * tags:
- *   name: ReservationOptionTypeVariants
- *   description: Variants for reservation option types
+ *   name: OptionTypeVariants
+ *   description: Manage reservation option type variants
  */
 
 /**
  * @swagger
  * /api/option-type-variants:
  *   get:
- *     summary: Get all variants
- *     tags: [ReservationOptionTypeVariants]
+ *     summary: Get all option type variants
+ *     tags: [OptionTypeVariants]
  *     responses:
  *       200:
- *         description: List of variants
+ *         description: List of option type variants
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   reservation_option_type_id:
+ *                     type: integer
+ *                     example: 2
+ *                   name:
+ *                     type: string
+ *                     example: "VIP Seat"
+ *                   price:
+ *                     type: number
+ *                     example: 50
+ *                   pricing_type:
+ *                     type: string
+ *                     example: "fixed"
+ *                   active:
+ *                     type: boolean
+ *                     example: true
+ *                   description:
+ *                     type: string
+ *                     example: "Front row seat with extra legroom"
+ *                   created_at:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2025-12-10T09:00:00Z"
+ *                   updated_at:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2025-12-10T09:00:00Z"
+ *       500:
+ *         description: Server error
  */
-router.get("/", getVariants);
 
 /**
  * @swagger
  * /api/option-type-variants/option-type/{optionTypeId}:
  *   get:
- *     summary: Get variants for a reservation option type
- *     tags: [ReservationOptionTypeVariants]
+ *     summary: Get variants by reservation option type
+ *     tags: [OptionTypeVariants]
  *     parameters:
  *       - in: path
  *         name: optionTypeId
+ *         required: true
  *         schema:
  *           type: integer
- *         required: true
+ *           example: 2
+ *         description: Reservation option type ID
  *     responses:
  *       200:
- *         description: List of variants
+ *         description: List of variants for the option type
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 3
+ *                   reservation_option_type_id:
+ *                     type: integer
+ *                     example: 2
+ *                   name:
+ *                     type: string
+ *                     example: "VIP Seat"
+ *                   price:
+ *                     type: number
+ *                     example: 50
+ *                   pricing_type:
+ *                     type: string
+ *                     example: "fixed"
+ *                   active:
+ *                     type: boolean
+ *                     example: true
+ *                   description:
+ *                     type: string
+ *                     example: "Front row seat with extra legroom"
+ *                   created_at:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2025-12-10T09:00:00Z"
+ *                   updated_at:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2025-12-10T09:00:00Z"
+ *       404:
+ *         description: Option type not found
+ *       500:
+ *         description: Server error
  */
-router.get("/option-type/:optionTypeId", getVariantsByOptionType);
 
 /**
  * @swagger
  * /api/option-type-variants:
  *   post:
- *     summary: Create a variant
- *     tags: [ReservationOptionTypeVariants]
+ *     summary: Create a new option type variant
+ *     tags: [OptionTypeVariants]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/ReservationOptionTypeVariant'
+ *             type: object
+ *             required:
+ *               - reservation_option_type_id
+ *               - name
+ *               - price
+ *               - pricing_type
+ *               - active
+ *             properties:
+ *               reservation_option_type_id:
+ *                 type: integer
+ *                 example: 2
+ *               name:
+ *                 type: string
+ *                 example: "VIP Seat"
+ *               price:
+ *                 type: number
+ *                 example: 50
+ *               pricing_type:
+ *                 type: string
+ *                 example: "fixed"
+ *               active:
+ *                 type: boolean
+ *                 example: true
+ *               description:
+ *                 type: string
+ *                 example: "Front row seat with extra legroom"
  *     responses:
  *       201:
- *         description: Variant created
+ *         description: Variant created successfully
+ *       400:
+ *         description: Invalid data
+ *       500:
+ *         description: Server error
  */
-router.post("/", createVariant);
 
 /**
  * @swagger
  * /api/option-type-variants/{id}:
  *   put:
- *     summary: Update a variant
- *     tags: [ReservationOptionTypeVariants]
+ *     summary: Update an option type variant
+ *     tags: [OptionTypeVariants]
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
  *         schema:
  *           type: integer
- *         required: true
+ *           example: 1
+ *         description: Variant ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/ReservationOptionTypeVariant'
+ *             type: object
+ *             properties:
+ *               reservation_option_type_id:
+ *                 type: integer
+ *                 example: 2
+ *               name:
+ *                 type: string
+ *                 example: "VIP Seat Updated"
+ *               price:
+ *                 type: number
+ *                 example: 55
+ *               pricing_type:
+ *                 type: string
+ *                 example: "fixed"
+ *               active:
+ *                 type: boolean
+ *                 example: true
+ *               description:
+ *                 type: string
+ *                 example: "Updated description for VIP Seat"
  *     responses:
  *       200:
- *         description: Variant updated
+ *         description: Variant updated successfully
+ *       400:
+ *         description: Invalid data
+ *       404:
+ *         description: Variant not found
+ *       500:
+ *         description: Server error
  */
-router.put("/:id", updateVariant);
 
 /**
  * @swagger
  * /api/option-type-variants/{id}:
  *   delete:
- *     summary: Delete a variant
- *     tags: [ReservationOptionTypeVariants]
+ *     summary: Delete an option type variant by ID
+ *     tags: [OptionTypeVariants]
  *     parameters:
  *       - in: path
  *         name: id
+ *         required: true
  *         schema:
  *           type: integer
- *         required: true
+ *           example: 1
+ *         description: Variant ID
  *     responses:
  *       200:
- *         description: Variant deleted
+ *         description: Variant deleted successfully
+ *       404:
+ *         description: Variant not found
+ *       500:
+ *         description: Server error
  */
-router.delete("/:id", deleteVariant);
+
 
 export default router;

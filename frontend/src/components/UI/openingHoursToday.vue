@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-md p-2">
 
-    <div v-if="loading" class="text-gray-500">Loading...</div>
+    <div v-if="loading" class="text-gray-500">Loading data, Please wait...</div>
 
     <div v-else>
       <div v-if="todayOpeningHour">
@@ -26,21 +26,17 @@ import { useOpeningHoursStore, type OpeningHour } from "@/stores/openingHoursSto
 
 const openingHoursStore = useOpeningHoursStore();
 
-// Fetch opening hours on mount
 onMounted(() => {
   openingHoursStore.fetchOpeningHours();
 });
 
-// Array to map JS `getDay()` numbers to your `day_of_week` strings
 const dayNames = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
 
-// Get today's day string
 const todayDayString = computed(() => {
   const today = new Date();
   return dayNames[today.getDay()];
 });
 
-// Find opening hours for today
 const todayOpeningHour = computed<OpeningHour | null>(() => {
   return openingHoursStore.openingHours.find(
     (oh) => oh.day_of_week.toLowerCase() === todayDayString.value && oh.active

@@ -73,25 +73,19 @@ const reservationStore = useReservationStore();
 
 onMounted(async () => {
   await reservationStore.getAllReservations();
-  stats.loadStats(); // IMPORTANT: compute stats after data load
+  stats.loadStats();
 });
 
-/* ---------------------------
-   MONTH SELECTOR
---------------------------- */
 const months = computed(() => Object.keys(stats.revenueByMonth));
 
 const selectedMonth = ref("");
 
 watch(months, list => {
   if (list.length > 0 && !selectedMonth.value) {
-    selectedMonth.value = list[list.length - 1] ?? ""; // most recent month
+    selectedMonth.value = list[list.length - 1] ?? "";
   }
 });
 
-/* ---------------------------
-   MONTHLY REVENUE CHART
---------------------------- */
 const chartMonthData = computed(() => ({
   labels: Object.keys(stats.revenueByMonth),
   datasets: [
@@ -103,9 +97,7 @@ const chartMonthData = computed(() => ({
   ]
 }));
 
-/* ---------------------------
-   MONTHLY RESERVATION COUNT CHART
---------------------------- */
+
 const chartReservationCountData = computed(() => {
   // Count paid reservations per month
   const countMap: Record<string, number> = {};
@@ -127,9 +119,7 @@ const chartReservationCountData = computed(() => {
   };
 });
 
-/* ---------------------------
-   DAILY REVENUE FOR SELECTED MONTH
---------------------------- */
+
 const selectedMonthRevenueMap = computed(() => {
   const result: Record<string, number> = {};
   Object.entries(stats.revenueByDay).forEach(([day, value]) => {
@@ -159,9 +149,6 @@ const chartDayData = computed(() => ({
   ]
 }));
 
-/* ---------------------------
-   CHART OPTIONS
---------------------------- */
 const chartOptions = { responsive: true };
 
 const totalRevenue = computed(() => stats.totalRevenue);

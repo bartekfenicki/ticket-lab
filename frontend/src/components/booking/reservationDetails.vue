@@ -158,7 +158,6 @@ const submitReservation = async () => {
 
   const newReservation = await reservationStore.createReservation(payload);
 
-  // 🔥 REDIRECT WITH REAL ID
   router.push({
     name: "reservationReceipt",
     query: { id: newReservation.id },
