@@ -15,7 +15,7 @@
       :key="area.name"
       class="absolute flex flex-col items-center group cursor-pointer transition-transform duration-300"
       :style="{ top: area.top, left: area.left }"
-      @mouseenter="hoveredArea = area"
+      @mouseenter="handleHover(area)"
       @mouseleave="hoveredArea = null"
     >
       <button
@@ -39,12 +39,22 @@
           :style="panelPositionStyle"
           aria-live="polite"
         >
+          <!-- Loading spinner -->
+          <div v-if="!loadedImages[hoveredArea.name]" class="flex items-center justify-center h-32 mb-2">
+            <svg class="animate-spin h-8 w-8 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+          </div>
+
+          <!-- Loaded image -->
           <img
+            v-if="loadedImages[hoveredArea.name]"
             :src="hoveredArea.image"
             :alt="`Image of ${hoveredArea.name}`"
             class="w-full h-32 object-cover rounded-md mb-2"
-            loading="lazy"
           />
+
           <h3 class="text-lg font-semibold text-gray-800 mb-1">{{ hoveredArea.name }}</h3>
           <p class="text-sm text-gray-600">{{ hoveredArea.description }}</p>
         </div>
@@ -66,6 +76,7 @@ interface Area {
 }
 
 const hoveredArea = ref<Area | null>(null)
+const loadedImages = ref<Record<string, boolean>>({})
 const mousePos = ref({ x: 0, y: 0 })
 
 const handleMouseMove = (e: MouseEvent) => {
@@ -96,6 +107,18 @@ const panelPositionStyle = computed(() => {
 
   return { top: `${mouseY + offsetY}px`, left: `${mouseX + offsetX}px` }
 })
+
+// Lazy-load hover image with loading state
+const handleHover = (area: Area) => {
+  hoveredArea.value = area
+  if (!loadedImages.value[area.name]) {
+    const img = new Image()
+    img.src = area.image
+    img.onload = () => {
+      loadedImages.value[area.name] = true
+    }
+  }
+}
 
 const areas: Area[] = [
   {
@@ -202,4 +225,5 @@ const areas: Area[] = [
   background-size: cover, 200px 200px;
 }
 </style>
+
 
