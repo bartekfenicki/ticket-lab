@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import * as ticketModel from "../models/ticketModel.js";
 import { v4 as uuidv4 } from "uuid";
 import { generateTicketPdfBuffer } from "../utils/generateTicketPdf.js";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 export const createTicket = async (req: Request, res: Response) => {
   try {
@@ -133,6 +133,8 @@ export const updateTicketController = async (req: Request, res: Response) => {
 };
 
 
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 export const sendTicketByEmail = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
@@ -141,37 +143,32 @@ export const sendTicketByEmail = async (req: Request, res: Response) => {
     if (!ticket) {
       return res.status(404).json({ message: "Ticket not found" });
     }
-
-    // Generate PDF buffer
     const pdfBuffer = await generateTicketPdfBuffer(ticket);
 
-    // Email transporter
-const transporter = nodemailer.createTransport({
-  host: process.env.MAIL_HOST,
-  port: Number(process.env.MAIL_PORT),
-  secure: false,               // ALWAYS false for port 587
-  auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
-  },
-});
-
-    await transporter.sendMail({
-      from: '"Your Event" <no-reply@yourdomain.com>',
+    const emailResponse = await resend.emails.send({
+      from: process.env.RESEND_FROM!,
       to: ticket.email,
-      subject: "Your Ticket Receipt",
-      text: "Attached is your ticket PDF.",
+      subject: `Your Ticket #${ticket.id}`,
+      text: `Hello ${ticket.full_name},
+
+        Attached is your ticket receipt.
+
+        Thank you for your purchase!
+        ${process.env.WEB_LINK}`,
       attachments: [
         {
           filename: `ticket-${ticket.id}.pdf`,
-          content: pdfBuffer,
-        }
-      ]
+          content: pdfBuffer.toString("base64"),
+        },
+      ],
     });
 
+    console.log("RESEND TICKET EMAIL RESPONSE:", emailResponse);
+
     return res.json({ message: "Email sent" });
+
   } catch (err) {
-    console.error(err);
+    console.error("Resend Ticket Email Error:", err);
     return res.status(500).json({ message: "Failed to send email" });
   }
 };
