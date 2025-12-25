@@ -36,6 +36,14 @@
       </select>
     </div>
 
+    <!-- Daily Revenue -->
+    <div class="bg-white p-6 shadow rounded-xl mb-10 border">
+      <h2 class="text-lg font-bold mb-3">
+        Daily Revenue for {{ selectedMonth }}
+      </h2>
+      <LineChart :chart-data="chartDayData" :options="chartOptions" />
+    </div>
+
     <!-- Revenue by Month -->
     <div class="bg-white p-6 shadow rounded-xl mb-10 border">
       <h2 class="text-lg font-bold mb-3">Revenue by Month</h2>
@@ -48,13 +56,6 @@
       <BarChart :chart-data="chartTicketCountData" :options="chartOptions" />
     </div>
 
-    <!-- Daily Revenue -->
-    <div class="bg-white p-6 shadow rounded-xl mb-10 border">
-      <h2 class="text-lg font-bold mb-3">
-        Daily Revenue for {{ selectedMonth }}
-      </h2>
-      <LineChart :chart-data="chartDayData" :options="chartOptions" />
-    </div>
 
     <!-- Ticket Type Stats -->
     <div class="bg-white p-6 shadow rounded-xl border">
@@ -88,7 +89,7 @@ const selectedMonth = ref("");
 
 watch(months, (list) => {
   if (list.length > 0 && !selectedMonth.value) {
-    selectedMonth.value = list[list.length - 1];
+    selectedMonth.value = list[list.length - 1]!;
   }
 });
 

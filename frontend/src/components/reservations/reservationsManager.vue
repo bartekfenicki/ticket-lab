@@ -58,14 +58,6 @@
     class="px-3 py-2 border rounded-lg w-full md:w-80"
   />
 
-  <!-- Sort Button -->
-  <button
-    @click="toggleSort"
-    class="px-4 py-2 bg-indigo-600 text-white rounded-lg w-full md:w-auto"
-  >
-    Sort by Date: {{ sortAsc ? 'Oldest → Newest' : 'Newest → Oldest' }}
-  </button>
-
   <!-- Payment Filter -->
   <select
     v-model="paymentFilter"
@@ -117,7 +109,7 @@
     <tbody>
       <template v-for="r in filteredAndSorted" :key="r.id">
         <!-- Main Row -->
-        <tr class="border-b cursor-pointer" @click="toggleExpanded(r.id)">
+        <tr class="border-b cursor-pointer" @click="toggleExpanded(r.id!)">
           <td class="px-4 py-3">{{ r.id }}</td>
           <td class="px-4 py-3">{{ r.first_name }} {{ r.last_name }}</td>
           <td class="px-4 py-3">{{ r.email }}</td>
@@ -139,7 +131,7 @@
               Edit
             </button>
             <button
-              @click.stop="deleteRes(r.id)"
+              @click.stop="deleteRes(r.id!)"
               class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700"
             >
               Delete
@@ -148,7 +140,7 @@
         </tr>
 
         <!-- Expanded Row -->
-        <tr v-if="expanded.includes(r.id)" class="bg-gray-50 border-b">
+        <tr v-if="expanded.includes(r.id!)" class="bg-gray-50 border-b">
           <td colspan="7" class="p-4">
             <div class="overflow-x-auto w-full">
               <div class="min-w-[600px] grid grid-cols-2 gap-4 text-gray-700">
@@ -174,31 +166,38 @@
               <div class="mt-4 flex flex-wrap gap-4">
                 <button
                   v-if="r.status === 'pending_confirmation'"
-                  @click="changeStatus(r.id, 'confirmed')"
+                  @click="changeStatus(r.id!, 'confirmed')"
                   class="px-4 py-2 bg-green-600 text-white rounded-lg"
                 >
                   Confirm Reservation
                 </button>
                 <button
                   v-if="r.status === 'pending_confirmation'"
-                  @click="changeStatus(r.id, 'declined')"
+                  @click="changeStatus(r.id!, 'declined')"
                   class="px-4 py-2 bg-red-600 text-white rounded-lg"
                 >
                   Decline Reservation
                 </button>
                 <button
                   v-if="r.status === 'confirmed'"
-                  @click="changeStatus(r.id, 'cancelled')"
+                  @click="changeStatus(r.id!, 'cancelled')"
                   class="px-4 py-2 bg-red-600 text-white rounded-lg"
                 >
                   Cancel Reservation
                 </button>
                 <button
                   v-if="r.status === 'declined' || r.status === 'cancelled'"
-                  @click="changeStatus(r.id, 'confirmed')"
+                  @click="changeStatus(r.id!, 'confirmed')"
                   class="px-4 py-2 bg-green-600 text-white rounded-lg"
                 >
                   Reactivate Reservation
+                </button>
+                <button
+                  v-if="r.status === 'confirmed'"
+                  @click="changeStatus(r.id!, 'completed')"
+                  class="px-4 py-2 bg-green-600 text-white rounded-lg"
+                >
+                  Mark as Completed
                 </button>
                 <button
                   v-if="r.status === 'confirmed'"
@@ -306,7 +305,7 @@ const searchQuery = ref("");
    SORTING
 --------------------------------------------- */
 const sortAsc = ref(false);
-const toggleSort = () => (sortAsc.value = !sortAsc.value);
+
 
 /* ---------------------------------------------
    EXPANDED ROWS
@@ -434,6 +433,7 @@ const statusColor = (status: string) => ({
 const changeStatus = (id: number, status: string) =>
   store.updateReservation(id, { status });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const togglePayStatus = (reservation: any) => {
   const newStatus = reservation.payment_status === "pending" ? "paid" : "pending";
   store.updateReservation(reservation.id, { payment_status: newStatus });
@@ -443,12 +443,11 @@ const deleteRes = async (id: number) => {
   await store.deleteReservation(id);
 };
 
-/* ---------------------------------------------
-   EDIT MODAL
---------------------------------------------- */
 const editOpen = ref(false);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const editData = reactive<any>({});
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const openEditModal = (reservation: any) => {
   Object.assign(editData, {
     ...reservation,

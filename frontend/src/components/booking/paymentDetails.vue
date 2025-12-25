@@ -29,13 +29,7 @@
       <!-- Event / Ticket Info -->
       <div class="border border-gray-200 rounded-lg m-8 p-4 space-y-2 bg-gray-50">
         <h2 class="text-xl font-semibold text-gray-800">Booking Summary</h2>
-        <div v-if="bookingType === 'reservation'">
-          <p><strong>Event Type:</strong> {{ bookingData?.type }}</p>
-          <p><strong>Selected Option:</strong> {{ bookingData?.option }}</p>
-          <p><strong>Number of People:</strong> {{ bookingData?.people }}</p>
-          <p v-if="bookingData?.addons?.length"><strong>Add-ons:</strong> {{ bookingData.addons.join(', ') }}</p>
-        </div>
-       <div v-else>
+       <div>
           <h3 class="font-semibold text-gray-800">Tickets:</h3>
 
           <div
@@ -164,12 +158,11 @@ async function updateSoldQuantityForDate(date: string, amount: number) {
 const route = useRoute()
 const router = useRouter()
 
-// Type of booking: "reservation" or "tickets"
 const bookingType = ref(route.params.type as string)
 
 const ticketStore = useTicketStore()
 
-// Parse data from query
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const bookingData = ref<any>(null)
 const selectedPaymentMethod = ref<string>('')
 
@@ -188,7 +181,6 @@ const handlePayment = async () => {
   if (!bookingData.value) return
 
   try {
-    // Construct the ticket payload
     const ticketPayload: Omit<Ticket, "id" | "qr_token" | "used" | "created_at"> = {
       date: bookingData.value.date,
       email: bookingData.value.email,
@@ -196,8 +188,9 @@ const handlePayment = async () => {
       full_name: `${bookingData.value.firstName} ${bookingData.value.lastName}`,
       other_names: bookingData.value.names || "",
       total_price: bookingData.value.totalPrice,
-      special_event_id: null, // or from your booking data
+      special_event_id: null,
       payment_status: "paid", // default
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       items: bookingData.value.tickets.map((t: any) => ({
         ticket_type_id: t.id,
         quantity: t.quantity,
@@ -223,13 +216,8 @@ const totalItemsBought = ticketPayload.items.reduce(
       0
     );
 
-
-    // Try updating backend
     await updateSoldQuantityForDate(ticketPayload.date, totalItemsBought);
 
-
-
-    // Redirect to ticketReceipt with ticket ID
     router.push({
       name: 'ticketReceipt',
       params: { ticketId: Number(newTicket.id) } ,
@@ -237,6 +225,7 @@ const totalItemsBought = ticketPayload.items.reduce(
     })
     window.scrollTo({ top: 0, behavior: 'smooth' })
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     console.error('Failed to create ticket:', err)
     alert('Failed to create ticket. Please try again.')
@@ -245,10 +234,6 @@ const totalItemsBought = ticketPayload.items.reduce(
 
 // Go back to previous page depending on booking type
 const goBack = () => {
-  if (bookingType.value === 'reservation') {
-    router.push({ name: 'reservation', query: { date: bookingData.value?.date } })
-  } else {
     router.push({ name: 'tickets', query: { date: bookingData.value?.date } })
   }
-}
 </script>

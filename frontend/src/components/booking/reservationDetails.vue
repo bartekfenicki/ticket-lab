@@ -9,16 +9,15 @@
 
         <ul class="text-gray-700 space-y-1">
           <li><strong>Type:</strong> {{ reservationData.reservation_option_type.name }}</li>
-              <li v-if="reservationData.variant">
-                <strong>Variant:</strong> {{ reservationData.variant.name }}
-                ({{ formatPrice(reservationData.variant.price, reservationData.variant.pricing_type) }})
-              </li>
-              <li><strong>People:</strong> {{ reservationData.numPeople }}</li>
-              <li v-if="reservationData.addOns.length > 0">
-                <strong>Add-ons:</strong> {{ reservationData.addOns.map(a => a.name).join(", ") }}
-              </li>
-              <li><strong>Total:</strong> {{ reservationData.totalPrice }} PLN</li>
-
+          <li v-if="reservationData.variant">
+            <strong>Variant:</strong> {{ reservationData.variant.name }}
+            ({{ formatPrice(reservationData.variant.price, reservationData.variant.pricing_type) }})
+          </li>
+          <li><strong>People:</strong> {{ reservationData.numPeople }}</li>
+          <li v-if="reservationData.addOns.length > 0">
+            <strong>Add-ons:</strong> {{ reservationData.addOns.map(a => a.name).join(", ") }}
+          </li>
+          <li><strong>Total:</strong> {{ reservationData.totalPrice }} PLN</li>
         </ul>
       </div>
 
@@ -29,41 +28,51 @@
           <h2 class="text-xl font-semibold text-gray-800 mb-2">Contact Information</h2>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <!-- First Name -->
             <div>
               <label class="block text-sm font-medium text-gray-700">First Name</label>
-              <input v-model="form.firstName" required
+              <input v-model="form.firstName" @input="sanitizeField('firstName')" required
                 type="text"
+                maxlength="40"
                 class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"/>
             </div>
 
+            <!-- Last Name -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Last Name</label>
-              <input v-model="form.lastName" required
+              <input v-model="form.lastName" @input="sanitizeField('lastName')" required
                 type="text"
+                maxlength="40"
                 class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"/>
             </div>
 
+            <!-- Email -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Email</label>
-              <input v-model="form.email" required
+              <input v-model="form.email" @input="sanitizeField('email')" required
                 type="email"
+                maxlength="80"
                 class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"/>
             </div>
 
+            <!-- Phone -->
             <div>
               <label class="block text-sm font-medium text-gray-700">Phone Number</label>
-              <input v-model="form.phone" required
+              <input v-model="form.phone" @input="sanitizeField('phone')" required
                 type="tel"
+                maxlength="20"
                 class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"/>
             </div>
           </div>
         </div>
 
-        <!-- Reservation Date/Time -->
+        <!-- Reservation Details -->
         <div>
           <h2 class="text-xl font-semibold text-gray-800 mb-2">Reservation Details</h2>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
             <div>
               <label class="block text-sm font-medium text-gray-700">Date</label>
               <input disabled v-model="form.date"
@@ -73,7 +82,7 @@
 
             <div>
               <label class="block text-sm font-medium text-gray-700">Start Time</label>
-              <input v-model="form.time" required
+              <input v-model="form.time" @input="sanitizeField('time')" required
                 type="time"
                 class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"/>
             </div>
@@ -83,7 +92,9 @@
             <label class="block text-sm font-medium text-gray-700">Additional Notes</label>
             <textarea
               v-model="form.notes"
+              @input="sanitizeField('notes')"
               rows="3"
+              maxlength="500"
               placeholder="Special requests, dietary needs, etc."
               class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
             ></textarea>
@@ -114,13 +125,13 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import {  useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useReservationStore, type Reservation, type ReservationStepData } from "@/stores/reservationStore";
 
 const props = defineProps<{ reservationData: ReservationStepData }>();
 const router = useRouter();
 const reservationStore = useReservationStore();
-const route = useRoute()
+const route = useRoute();
 
 const form = ref({
   firstName: "",
@@ -131,6 +142,49 @@ const form = ref({
   time: "",
   notes: "",
 });
+
+
+const stripHTML = (value: string) => value.replace(/<[^>]*>?/gm, "");
+
+// Field-specific sanitization rules
+const sanitizeField = (field: keyof typeof form.value) => {
+  let val = stripHTML(String(form.value[field] ?? ""));
+
+  switch (field) {
+    case "firstName":
+    case "lastName":
+      val = val.replace(/[^A-Za-zÀ-ž\s'-]/g, "");
+      break;
+
+    case "email":
+      val = val.replace(/\s/g, "");
+      break;
+
+    case "phone":
+      val = val.replace(/[^0-9+\-\s]/g, "");
+      break;
+
+    case "notes":
+      val = val.slice(0, 500);
+      break;
+
+    case "time":
+      break;
+  }
+
+  form.value[field] = val;
+};
+
+const sanitizePayload = (payload: Reservation) => ({
+  ...payload,
+  email: stripHTML(payload.email),
+  first_name: stripHTML(payload.first_name),
+  last_name: stripHTML(payload.last_name),
+  phone: stripHTML(payload.phone),
+  note: payload.note ? stripHTML(payload.note) : null,
+});
+
+
 
 const formatPrice = (price: number, type: string) =>
   type === "per_person" ? `${price} PLN / person` : `${price} PLN`;
@@ -154,16 +208,20 @@ const submitReservation = async () => {
     selected_variant: props.reservationData.variant || null,
     selected_add_ons: props.reservationData.addOns || [],
   };
+
   if (!route.query.date) throw new Error("Date not provided");
 
-  const newReservation = await reservationStore.createReservation(payload);
+  // FINAL SAFETY PASS
+  const securePayload = sanitizePayload(payload);
+
+  const newReservation = await reservationStore.createReservation(securePayload);
 
   router.push({
     name: "reservationReceipt",
     query: { id: newReservation.id },
   });
 };
-
 </script>
+
 
 

@@ -25,6 +25,7 @@
             type="text"
             placeholder="Your Name"
             required
+            @input="sanitize('name')"
             class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
           />
 
@@ -33,6 +34,7 @@
             type="email"
             placeholder="Your Email"
             required
+            @input="sanitize('email')"
             class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
           />
 
@@ -41,6 +43,7 @@
             placeholder="Your Message"
             rows="4"
             required
+            @input="sanitize('message')"
             class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
           ></textarea>
 
@@ -54,6 +57,7 @@
           <p v-if="successMessage" class="text-green-600 mt-2">{{ successMessage }}</p>
         </form>
 
+
         <div class="w-full h-64 md:h-80 bg-gray-200 rounded-lg flex items-center justify-center text-gray-600 text-center">
           Map will go here
         </div>
@@ -62,21 +66,52 @@
   </section>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue';
+import {  ref } from "vue";
+
+const successMessage = ref("");
 
 const form = ref({
-  name: '',
-  email: '',
-  message: ''
+  name: "",
+  email: "",
+  message: "",
 });
 
-const successMessage = ref('');
+// --- HTML STRIPPER ---
+const stripHTML = (value: string) =>
+  value.replace(/<[^>]+>/g, "");
+
+// --- SANITIZER ---
+const sanitize = (field: "name" | "email" | "message") => {
+  let val = String(form.value[field] ?? "");
+
+  val = stripHTML(val).trim();
+
+  if (field === "name") {
+    // Allow letters, spaces, dash, apostrophe
+    val = val.replace(/[^A-Za-zÀ-ž\s'-]/g, "").slice(0, 50);
+  }
+
+  if (field === "email") {
+    // No spaces, no HTML, max length, lowercase
+    val = val.replace(/\s/g, "").toLowerCase().slice(0, 80);
+  }
+
+  if (field === "message") {
+    // No HTML, no scripts, max safe length
+    val = val.replace(/<script.*?>.*?<\/script>/gi, "");
+    val = val.slice(0, 1000);
+  }
+
+  form.value[field] = val;
+};
 
 const submitForm = () => {
-  console.log('Form submitted:', form.value);
-  successMessage.value = 'Your message has been sent!';
+  // Backend validation should still be used!
+  console.log("Sending message:", form);
   form.value = { name: '', email: '', message: '' };
+  successMessage.value = "Message sent!";
 };
 </script>
+
 
 

@@ -37,8 +37,16 @@
       </select>
     </div>
 
+    <!-- Daily Revenue Chart -->
+    <div class="bg-white p-6 shadow rounded-xl border">
+      <h2 class="text-lg font-bold mb-3">
+        Revenue for {{ selectedMonth }}
+      </h2>
+      <LineChart :chart-data="chartDayData" :options="chartOptions" />
+    </div>
+
     <!-- Monthly Revenue Chart -->
-    <div class="bg-white p-6 shadow rounded-xl mb-10 border">
+    <div class="bg-white p-6 shadow rounded-xl my-10 border">
       <h2 class="text-lg font-bold mb-3">Revenue by Month</h2>
       <BarChart :chart-data="chartMonthData" :options="chartOptions" />
     </div>
@@ -49,13 +57,7 @@
       <BarChart :chart-data="chartReservationCountData" :options="chartOptions" />
     </div>
 
-    <!-- Daily Revenue Chart -->
-    <div class="bg-white p-6 shadow rounded-xl border">
-      <h2 class="text-lg font-bold mb-3">
-        Revenue for {{ selectedMonth }}
-      </h2>
-      <LineChart :chart-data="chartDayData" :options="chartOptions" />
-    </div>
+
   </div>
 </template>
 

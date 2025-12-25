@@ -40,7 +40,7 @@
 
     <!-- Upcoming Reservations -->
     <div class="bg-white p-6 shadow rounded-xl border">
-      <h2 class="text-lg font-bold mb-4 text-gray-700">Upcoming Reservations</h2>
+      <h2 @click="goToTab('reservations')" class="text-lg cursor-pointer font-bold mb-4 text-gray-700">Upcoming Reservations</h2>
       <ul class="space-y-3">
         <li
           v-for="res in upcomingReservations"
@@ -64,7 +64,7 @@
 
     <!-- Upcoming Tickets -->
     <div class="bg-white p-6 shadow rounded-xl border">
-      <h2 class="text-lg font-bold mb-4 text-gray-700">Upcoming Tickets</h2>
+      <h2 @click="goToTab('tickets')" class="text-lg cursor-pointer font-bold mb-4 text-gray-700">Upcoming Tickets</h2>
       <ul class="space-y-3">
         <li
           v-for="ticket in upcomingTickets"
