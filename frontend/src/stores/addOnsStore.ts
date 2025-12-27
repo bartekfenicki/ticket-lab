@@ -21,7 +21,6 @@ export const useReservationOptionAddOnsStore = defineStore(
     const loading = ref(false);
     const error = ref<string | null>(null);
 
-    // Fetch all add-ons
     const fetchAddOns = async () => {
       loading.value = true;
       error.value = null;
@@ -36,7 +35,6 @@ export const useReservationOptionAddOnsStore = defineStore(
       }
     };
 
-    // Fetch add-ons for a specific option type
     const fetchAddOnsByOptionType = async (optionTypeId: number) => {
       loading.value = true;
       error.value = null;
@@ -51,7 +49,6 @@ export const useReservationOptionAddOnsStore = defineStore(
       }
     };
 
-    // Create an add-on
     const createAddOn = async (data: Omit<ReservationOptionAddOn, "id" | "created_at" | "updated_at">) => {
       loading.value = true;
       try {
@@ -69,7 +66,6 @@ export const useReservationOptionAddOnsStore = defineStore(
       }
     };
 
-    // Update an add-on
     const updateAddOn = async (id: number, data: Partial<ReservationOptionAddOn>) => {
       loading.value = true;
       try {
@@ -88,7 +84,6 @@ export const useReservationOptionAddOnsStore = defineStore(
       }
     };
 
-    // Delete an add-on
     const deleteAddOn = async (id: number) => {
       loading.value = true;
       try {

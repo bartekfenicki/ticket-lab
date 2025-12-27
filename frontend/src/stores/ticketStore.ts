@@ -30,7 +30,6 @@ export const useTicketStore = defineStore("ticketStore", () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
 
-  // Fetch tickets by email
   const fetchTicketsByEmail = async (email: string) => {
     loading.value = true;
     error.value = null;
@@ -45,7 +44,6 @@ export const useTicketStore = defineStore("ticketStore", () => {
     }
   };
 
-  // Fetch a ticket by ID
   const fetchTicketById = async (id: number) => {
     loading.value = true;
     error.value = null;
@@ -70,7 +68,6 @@ export const useTicketStore = defineStore("ticketStore", () => {
     }
   };
 
-  // Fetch all tickets
   const fetchAllTickets = async () => {
     loading.value = true;
     error.value = null;
@@ -85,7 +82,6 @@ export const useTicketStore = defineStore("ticketStore", () => {
     }
   };
 
-  // Create a new ticket
   const createTicket = async (ticketData: Omit<Ticket, "id" | "created_at" | "qr_token" | "used">) => {
     loading.value = true;
     error.value = null;
@@ -140,7 +136,7 @@ export const useTicketStore = defineStore("ticketStore", () => {
     loading,
     error,
     fetchTicketsByEmail,
-    fetchTicketById, // <-- added here
+    fetchTicketById,
     fetchAllTickets,
     createTicket,
     updateTicket

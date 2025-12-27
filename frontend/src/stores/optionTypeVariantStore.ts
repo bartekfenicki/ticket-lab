@@ -20,7 +20,6 @@ export const useOptionTypeVariantsStore = defineStore(
     const loading = ref(false);
     const error = ref<string | null>(null);
 
-    // Fetch all variants
     const fetchVariants = async () => {
       loading.value = true;
       error.value = null;
@@ -35,7 +34,6 @@ export const useOptionTypeVariantsStore = defineStore(
       }
     };
 
-    // Fetch variants for a specific reservation option type
     const fetchVariantsByOptionType = async (optionTypeId: number) => {
       loading.value = true;
       error.value = null;
@@ -50,7 +48,6 @@ export const useOptionTypeVariantsStore = defineStore(
       }
     };
 
-    // Create a variant
     const createVariant = async (data: Omit<OptionTypeVariant, "id" | "created_at" | "updated_at">) => {
       loading.value = true;
       try {
@@ -68,7 +65,6 @@ export const useOptionTypeVariantsStore = defineStore(
       }
     };
 
-    // Update a variant
     const updateVariant = async (id: number, data: Partial<OptionTypeVariant>) => {
       loading.value = true;
       try {
@@ -87,7 +83,6 @@ export const useOptionTypeVariantsStore = defineStore(
       }
     };
 
-    // Delete a variant
     const deleteVariant = async (id: number) => {
       loading.value = true;
       try {

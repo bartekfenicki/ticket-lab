@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+// import helmet from "helmet";
 import { setupSwagger } from "./config/swagger.js";
 import userRoutes from "./routes/staffUserRoutes.js"
 import ticketTypeRoutes from "./routes/ticketTypeRoutes.js";
@@ -19,7 +20,41 @@ import emailLogsRoutes from "./routes/emailLogsRoutes.js";
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: "*" }));
+
+// app.use(
+//   helmet({
+//     contentSecurityPolicy: {
+//       directives: {
+//         defaultSrc: ["'self'"],
+//         scriptSrc: ["'self'"],
+//         styleSrc: ["'self'", "'unsafe-inline'"],
+//         imgSrc: ["'self'", "data:"],
+//       },
+//     },
+//     crossOriginEmbedderPolicy: false,
+//   })
+// );
+// not using since its crashing the build
+
+const allowedOrigins = [
+  "https://labiryntpodwarszawabilety.onrender.com/",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS policy: ${origin} not allowed`));
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 setupSwagger(app);
 

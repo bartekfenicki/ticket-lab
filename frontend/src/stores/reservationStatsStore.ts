@@ -1,55 +1,55 @@
 import { defineStore } from "pinia";
+import { ref, computed } from "vue";
 import { useReservationStore } from "@/stores/reservationStore";
 
-export const useStatisticsStore = defineStore("statistics", {
-  state: () => ({
-    paidReservations: [] as any[],
-    revenueByDay: {} as Record<string, number>,
-    revenueByMonth: {} as Record<string, number>,
-    totalRevenue: 0
-  }),
+export const useStatisticsStore = defineStore("statistics", () => {
+  // ====== STATE ======
+  const paidReservations = ref<any[]>([]);
+  const revenueByDay = ref<Record<string, number>>({});
+  const revenueByMonth = ref<Record<string, number>>({});
+  const totalRevenue = ref(0);
 
-  getters: {
-    months(state) {
-      return Object.keys(state.revenueByMonth);
-    },
+  const months = computed(() => Object.keys(revenueByMonth.value));
 
-    daysOfSelectedMonth: (state) => {
-      return (month: string) =>
-        Object.fromEntries(
-          Object.entries(state.revenueByDay).filter(([day]) =>
-            day.startsWith(month)
-          )
-        );
-    }
-  },
-
-  actions: {
-
-    loadStats() {
-      const reservationStore = useReservationStore();
-      const reservations = reservationStore.reservations;
-
-      this.paidReservations = reservations.filter(
-        (r) => r.payment_status?.toLowerCase() === "paid"
+  const daysOfSelectedMonth = computed(() => {
+    return (month: string) =>
+      Object.fromEntries(
+        Object.entries(revenueByDay.value).filter(([day]) =>
+          day.startsWith(month)
+        )
       );
+  });
 
-      this.revenueByDay = {};
-      this.revenueByMonth = {};
-      this.totalRevenue = 0;
+  const loadStats = () => {
+    const reservationStore = useReservationStore();
+    const reservations = reservationStore.reservations;
 
-      this.paidReservations.forEach((r) => {
-        const day = r.date.slice(0, 10);
-        const month = r.date.slice(0, 7);
-        const price = Number(r.total_price) || 0;
+    paidReservations.value = reservations.filter(
+      (r) => r.payment_status?.toLowerCase() === "paid"
+    );
 
-        this.revenueByDay[day] = (this.revenueByDay[day] || 0) + price;
+    revenueByDay.value = {};
+    revenueByMonth.value = {};
+    totalRevenue.value = 0;
 
-        this.revenueByMonth[month] =
-          (this.revenueByMonth[month] || 0) + price;
+    paidReservations.value.forEach((r) => {
+      const day = r.date.slice(0, 10);
+      const month = r.date.slice(0, 7);
+      const price = Number(r.total_price) || 0;
 
-        this.totalRevenue += price;
-      });
-    }
-  }
+      revenueByDay.value[day] = (revenueByDay.value[day] || 0) + price;
+      revenueByMonth.value[month] = (revenueByMonth.value[month] || 0) + price;
+      totalRevenue.value += price;
+    });
+  };
+
+  return {
+    paidReservations,
+    revenueByDay,
+    revenueByMonth,
+    totalRevenue,
+    months,
+    daysOfSelectedMonth,
+    loadStats,
+  };
 });

@@ -1,5 +1,6 @@
 import { apiFetch } from "@/utils/api";
 import { defineStore } from "pinia";
+import { ref } from "vue";
 
 export interface TicketType {
   id?: number;
@@ -10,93 +11,99 @@ export interface TicketType {
   active: boolean;
 }
 
-interface TicketTypeState {
-  ticketTypes: TicketType[];
-  loading: boolean;
-  error: string | null;
-}
+export const useTicketTypeStore = defineStore("ticketType", () => {
 
-export const useTicketTypeStore = defineStore("ticketType", {
-  state: (): TicketTypeState => ({
-    ticketTypes: [],
-    loading: false,
-    error: null,
-  }),
+  const ticketTypes = ref<TicketType[]>([]);
+  const loading = ref(false);
+  const error = ref<string | null>(null);
 
-  actions: {
-    async fetchTicketTypes() {
-      this.loading = true;
-      this.error = null;
-      try {
-        const res = await apiFetch("/api/ticket-types");
-        if (!res.ok) throw new Error("Failed to fetch ticket types");
-        this.ticketTypes = await res.json();
-      } catch (err: any) {
-        this.error = err.message || "Error fetching ticket types";
-      } finally {
-        this.loading = false;
-      }
-    },
+  const fetchTicketTypes = async () => {
+    loading.value = true;
+    error.value = null;
 
-    async createTicketType(ticket: Omit<TicketType, "id">) {
-      this.loading = true;
-      this.error = null;
-      try {
-        const res = await apiFetch("/api/ticket-types", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(ticket),
-        });
-        if (!res.ok) throw new Error("Failed to create ticket type");
-        const newTicket = await res.json();
-        this.ticketTypes.push(newTicket);
-        return newTicket;
-      } catch (err: any) {
-        this.error = err.message || "Error creating ticket type";
-        return null;
-      } finally {
-        this.loading = false;
-      }
-    },
+    try {
+      const res = await apiFetch("/api/ticket-types");
+      if (!res.ok) throw new Error("Failed to fetch ticket types");
+      ticketTypes.value = await res.json();
+    } catch (err: any) {
+      error.value = err.message || "Error fetching ticket types";
+    } finally {
+      loading.value = false;
+    }
+  };
 
-    async updateTicketType(id: number, updatedData: Partial<TicketType>) {
-      this.loading = true;
-      this.error = null;
-      try {
-        const res = await apiFetch(`/api/ticket-types/${id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedData),
-        });
-        if (!res.ok) throw new Error("Failed to update ticket type");
-        const updatedTicket = await res.json();
-        const index = this.ticketTypes.findIndex(t => t.id === id);
-        if (index !== -1) this.ticketTypes[index] = updatedTicket;
-        return updatedTicket;
-      } catch (err: any) {
-        this.error = err.message || "Error updating ticket type";
-        return null;
-      } finally {
-        this.loading = false;
-      }
-    },
+  const createTicketType = async (ticket: Omit<TicketType, "id">) => {
+    loading.value = true;
+    error.value = null;
 
-    async deleteTicketType(id: number) {
-      this.loading = true;
-      this.error = null;
-      try {
-        const res = await apiFetch(`/api/ticket-types/${id}`, {
-          method: "DELETE",
-        });
-        if (!res.ok) throw new Error("Failed to delete ticket type");
-        this.ticketTypes = this.ticketTypes.filter(t => t.id !== id);
-        return true;
-      } catch (err: any) {
-        this.error = err.message || "Error deleting ticket type";
-        return false;
-      } finally {
-        this.loading = false;
-      }
-    },
-  },
+    try {
+      const res = await apiFetch("/api/ticket-types", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(ticket),
+      });
+      if (!res.ok) throw new Error("Failed to create ticket type");
+
+      const newTicket = await res.json();
+      ticketTypes.value.push(newTicket);
+      return newTicket;
+    } catch (err: any) {
+      error.value = err.message || "Error creating ticket type";
+      return null;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const updateTicketType = async (id: number, updatedData: Partial<TicketType>) => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const res = await apiFetch(`/api/ticket-types/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
+      });
+      if (!res.ok) throw new Error("Failed to update ticket type");
+
+      const updatedTicket = await res.json();
+      const index = ticketTypes.value.findIndex((t) => t.id === id);
+      if (index !== -1) ticketTypes.value[index] = updatedTicket;
+      return updatedTicket;
+    } catch (err: any) {
+      error.value = err.message || "Error updating ticket type";
+      return null;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const deleteTicketType = async (id: number) => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const res = await apiFetch(`/api/ticket-types/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete ticket type");
+
+      ticketTypes.value = ticketTypes.value.filter((t) => t.id !== id);
+      return true;
+    } catch (err: any) {
+      error.value = err.message || "Error deleting ticket type";
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  return {
+    ticketTypes,
+    loading,
+    error,
+    fetchTicketTypes,
+    createTicketType,
+    updateTicketType,
+    deleteTicketType,
+  };
 });
