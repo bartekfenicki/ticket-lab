@@ -37,7 +37,7 @@ const app = express();
 // not using since its crashing the build
 
 const allowedOrigins = [
-  "https://labiryntpodwarszawabilety.onrender.com/",
+  "https://labiryntpodwarszawabilety.onrender.com",
   "http://localhost:5173",
   "http://127.0.0.1:5173",
 ];
