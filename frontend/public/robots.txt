@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Disallow admin and internal routes
+Disallow: /admin
+Disallow: /api
+Disallow: /auth
+
+# Sitemap location
+Sitemap: https://labiryntpodwarszawabilety.onrender.com/sitemap.xml

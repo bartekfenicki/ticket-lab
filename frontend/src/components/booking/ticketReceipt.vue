@@ -133,10 +133,6 @@ try {
   doc.setTextColor(50, 50, 50);
   doc.text("Labirynt pod Warszawa Ticket", pageWidth / 2, 80, { align: "center" });
 
-  // Ticket info box
-  doc.setFillColor(245, 245, 245);
-  doc.setDrawColor(0, 0, 0);
-  doc.rect(40, 100, pageWidth - 80, 200, "FD"); // Fill + border
 
   doc.setFontSize(12);
   doc.setTextColor(0, 0, 0);

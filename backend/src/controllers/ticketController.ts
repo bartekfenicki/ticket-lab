@@ -164,6 +164,8 @@ export const sendTicketByEmail = async (req: Request, res: Response) => {
     });
 
     console.log("RESEND TICKET EMAIL RESPONSE:", emailResponse);
+    console.log("RESEND_FROM:", process.env.RESEND_FROM);
+    console.log("RESEND_API_KEY exists:", !!process.env.RESEND_API_KEY);
 
     return res.json({ message: "Email sent" });
 
