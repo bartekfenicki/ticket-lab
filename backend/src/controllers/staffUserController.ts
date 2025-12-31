@@ -85,7 +85,6 @@ export const updateUser = async (req: Request, res: Response) => {
   const updates: userModel.StaffUser = { ...req.body };
 
   try {
-    // Handle password hashing
     if (updates.password_hash) {
       updates.password_hash = await bcrypt.hash(updates.password_hash, 10);
     }

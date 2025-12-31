@@ -77,7 +77,7 @@ export const sendReservationByEmail = async (req: Request, res: Response) => {
     // Send email with Resend
     const emailResponse = await resend.emails.send({
       from: process.env.RESEND_FROM!,
-      to: process.env.MAIL_USER!,    // admin email or wherever
+      to: process.env.MAIL_USER!,
       subject: `Reservation request from ${reservation.first_name} ${reservation.last_name}`,
       text: `Attached is the reservation summary for ${reservation.first_name} ${reservation.last_name}.
             Send payment details to ${reservation.email}.

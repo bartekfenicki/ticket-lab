@@ -29,12 +29,25 @@
         <button @click="downloadTicket" class="mt-6 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700">
           Download Ticket
         </button>
-        <button
+        <div class="relative inline-block group">
+        <button disabled
             @click="sendTicketByEmail"
-            class="mt-3 ms-0 sm:ms-4 px-6 py-3 bg-yellow-800 text-white rounded-lg hover:bg-blue-700"
+            class="mt-3 ms-0 sm:ms-4 px-6 py-3 bg-yellow-800 text-white rounded-lg hover:bg-yellow-600"
           >
-            Send Ticket via Email
+            Send Ticket via Email (currently disabled)
           </button>
+
+           <div
+              class="absolute left-1/2 -translate-x-1/2 top-full mt-2
+                    w-max max-w-xs px-3 py-2 text-sm text-white
+                    bg-gray-900 rounded-md shadow-lg
+                    opacity-0 scale-95
+                    group-hover:opacity-100 group-hover:scale-100
+                    transition-all duration-200 pointer-events-none"
+            >
+              Email sending is temporarily disabled due to resend domain restrictions.
+            </div>
+          </div>
       </div>
 
       <!-- No ticket found -->
